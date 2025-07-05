@@ -1,0 +1,9 @@
+[project]
+name = "indappproject"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "freesimplegui>=5.2.0.post1",
+]
