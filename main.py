@@ -2,21 +2,15 @@ import FreeSimpleGUI as sg
 
 def main():
     layout = [
-        [sg.Text("Hello, World!")],
-        [sg.Button("OK"), sg.Button("Cancel")]
+        [sg.Canvas(background_color="black", size=(400, 400), key="map_canvas")]
     ]
-    window = sg.Window("Simple GUI", layout)
+    window = sg.Window("HotelTraveler", layout)
     while True:
         event, values = window.read(timeout=1000)
         match event:
             case sg.WIN_CLOSED:
                 break
-            case "Cancel":
-                break
-            case "OK":
-                sg.popup("You clicked OK!")
             case sg.TIMEOUT_EVENT:
-                # TODO: update GUI
                 pass
         
     window.close()
