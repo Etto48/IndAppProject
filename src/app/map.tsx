@@ -28,24 +28,30 @@ function DetectMapDrag({ setMapMoved }: { setMapMoved: (moved: boolean) => void 
     const events = useMapEvents({
         drag: () => {
             setMapMoved(true);
+        },
+        zoom: () => {
+            
         }
     })
+    return null;
+}
+
+function ChangeMapView({ center, moved }: { center: [number, number], moved: boolean }) {
+    const map = useMap();
+    useEffect(() => {
+        if (!moved) {
+            map.panTo(center, { animate: true, duration: 0.5 });
+        }
+    }, [center, moved, map]);
     return null;
 }
 
 export default function Map({currentLocation, markers}: MapViewProps) {
     const [centerMap, setCenterMap] = useState(false);
     const [mapMoved, setMapMoved] = useState(false);
-    const [oldLocation, setOldLocation] = useState<[number, number]>(currentLocation);
-    useEffect(() => {
-        if (!mapMoved && (currentLocation[0] !== oldLocation[0] || currentLocation[1] !== oldLocation[1])) {
-            setCenterMap(!centerMap);
-            setOldLocation(currentLocation);
-        }
-    }, [currentLocation])
     return (
         <>
-        <MapContainer center={currentLocation} zoom={13} className="map" key={centerMap ? "reset" : "default"}>
+        <MapContainer center={currentLocation} zoom={15} className="map" key={centerMap ? "reset" : "default"}>
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -63,6 +69,7 @@ export default function Map({currentLocation, markers}: MapViewProps) {
                 </Marker>
             ))}
             <DetectMapDrag setMapMoved={setMapMoved}/>
+            <ChangeMapView center={currentLocation} moved={mapMoved}/>
         </MapContainer>
         <button className={"reset-view-button" + (mapMoved? " active" : "")} onClick={() => {
             setCenterMap(!centerMap);
