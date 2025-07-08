@@ -117,6 +117,12 @@ a {
   border: none;
   border-radius: 40px;
   cursor: pointer;
+
+  display: none;
+}
+
+.reset-view-button.active {
+  display: block;
 }
 
 .marker-list-container {

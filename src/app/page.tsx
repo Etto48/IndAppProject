@@ -1,19 +1,24 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useGeolocated } from "react-geolocated";
 const Map = dynamic(() => import("./map"), {
     ssr: false,
 });
 
 export default function Home() {
-    const [currentLocation, setCurrentLocation] = useState<[number, number]>([51.505, -0.09]);
     const [markers, setMarkers] = useState<Array<{ position: [number, number], popupText: string }>>([
-        { position: [51.51, -0.1], popupText: "Marker 1" },
-        { position: [51.52, -0.11], popupText: "Marker 2" },
-        { position: [51.53, -0.12], popupText: "Marker 3" },
-        { position: [51.54, -0.13], popupText: "Marker 4" },
-        { position: [51.55, -0.14], popupText: "Marker 5" },
+        
     ]);
+    const { coords, isGeolocationAvailable, isGeolocationEnabled } =
+            useGeolocated({
+                positionOptions: {
+                    enableHighAccuracy: true,
+                },
+                watchPosition: true,
+                userDecisionTimeout: 5000,
+            });
+    const currentLocation: [number, number] = coords ? [coords.latitude, coords.longitude] as [number, number] : [51.505, -0.09];
     return (
         <div className="container">
             <div className="map-container">

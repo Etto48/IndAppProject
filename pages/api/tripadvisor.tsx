@@ -10,7 +10,7 @@ export default async function handler(
     res: NextApiResponse<ResponseData>
 ) {
     const { lat, long } = req.query;
-    
+
     if (!lat || !long) {
         return res.status(400).json({ message: 'Latitude and longitude are required.' });
     }
@@ -20,7 +20,7 @@ export default async function handler(
         return res.status(500).json({ message: 'API key is not configured.' });
     }
 
-    const url = `https://proxy.herocod.com/tripadvisor/api/v1/location/search?key=${apiKey}&latLong=${lat},${long}&language=en`;
+    const url = `https://api.content.tripadvisor.com/api/v1/location/nearby_search?key=${apiKey}&latLong=${lat},${long}&language=en`;
     console.log(`Fetching data from: ${url}`);
     try {
         const apiResponse = await fetch(url, {
@@ -29,6 +29,7 @@ export default async function handler(
                 'accept': 'application/json'
             }
         });
+        console.log(apiResponse);
 
         if (!apiResponse.ok) {
             const errorData = await apiResponse.json();
