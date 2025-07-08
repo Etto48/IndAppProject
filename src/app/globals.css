@@ -1,0 +1,131 @@
+:root {
+  --background: #d0d0d0;
+  --component-background: #c0c0c0;
+  --component-background-hover: #b0b0b0;
+  --component-background-active: #a0a0a0;
+  --foreground: #181818;
+  --foreground-important: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #181818;
+    --component-background: #282828;
+    --component-background-hover: #383838;
+    --component-background-active: #484848;
+    --foreground: #d0d0d0;
+    --foreground-important: #ffffff;
+  }
+}
+
+button {
+  background-color: var(--component-background);
+  color: var(--foreground-important);
+  border: none;
+  cursor: pointer; 
+}
+
+button:hover {
+  background-color: var(--component-background-hover);
+}
+
+button:active {
+  background-color: var(--component-background-active);
+}
+
+@media (hover: none) {
+  .reset-view-button:hover {
+    background-color: var(--component-background);
+  }
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 100svh;
+  min-height: -webkit-fill-available;
+  width: 100vw;
+}
+/* breakpoints are: 
+   - 1200px: desktop
+   - 992px: tablet
+   - 768px: mobile
+   - 576px: small mobile
+*/
+@media screen and (max-width: 576px) {
+  .container {
+    flex-direction: column;
+  }
+
+}
+
+.map-container {
+  height: 100%;
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.map {
+  height: 100%;
+  width: 100%;
+}
+
+.reset-view-button {
+  font-size: 20px;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  margin-top: -60px;
+  width: fit-content;
+  z-index: 1000;
+  padding: 10px 40px;
+  box-sizing: border-box;
+
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+}
+
+.marker-list-container {
+  flex: 1;
+  overflow-y: scroll;
+  padding: 20px;
+}
+
+.marker-list ul {
+  list-style: none;
+  padding: 0;
+}
