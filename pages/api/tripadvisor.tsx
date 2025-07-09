@@ -4,7 +4,51 @@ require('dotenv').config()
 type ResponseData = {
     message: string
 }
- 
+
+type LocationDetails = {
+    location_id: string,
+    lat: number,
+    long: number,
+    category: string,
+    subcategory: string
+}
+
+let locationCache: Record<string, LocationDetails> = {};
+
+async function getLocationInfo(location_id: string, apiKey: string): Promise<LocationDetails> {
+    if (locationCache[location_id]) {
+        return locationCache[location_id];
+    }
+
+    const detailsUrl = `https://api.content.tripadvisor.com/api/v1/location/${location_id}/details?key=${apiKey}&language=en`;
+    try {
+        const detailsResponse = await fetch(detailsUrl, {
+            method: 'GET',
+            headers: {
+                'accept': 'application/json'
+            }
+        });
+
+        if (!detailsResponse.ok) {
+            throw new Error(`Error fetching details for location ${location_id}: ${detailsResponse.statusText}`);
+        }
+
+        const detailsData = await detailsResponse.json();
+        let details = {
+            location_id: location_id,
+            lat: detailsData.latitude,
+            long: detailsData.longitude,
+            category: detailsData.category.name,
+            subcategory: detailsData.subcategory.name,
+        };
+        locationCache[location_id] = details;
+        return details;
+    } catch {
+        throw new Error(`Failed to fetch details for location ${location_id}`);
+    }
+}
+    
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<ResponseData>
@@ -21,7 +65,6 @@ export default async function handler(
     }
 
     const url = `https://api.content.tripadvisor.com/api/v1/location/nearby_search?key=${apiKey}&latLong=${lat},${long}&language=en`;
-    console.log(`Fetching data from: ${url}`);
     try {
         const apiResponse = await fetch(url, {
             method: 'GET',
@@ -29,7 +72,6 @@ export default async function handler(
                 'accept': 'application/json'
             }
         });
-        console.log(apiResponse);
 
         if (!apiResponse.ok) {
             const errorData = await apiResponse.json();
@@ -37,6 +79,29 @@ export default async function handler(
         }
 
         const data = await apiResponse.json();
+        if (data && data.data) {
+            const mappedLocations = await Promise.all(
+                data.data.map(async (location: { location_id: string }) => {
+                    try {
+                        const locationDetails = await getLocationInfo(location.location_id, apiKey);
+                        return {
+                            lat: locationDetails.lat,
+                            long: locationDetails.long,
+                            category: locationDetails.category || 'unknown',
+                            subcategory: locationDetails.subcategory || 'unknown',
+                        };
+                    } catch (error) {
+                        return { error: error }
+                    }
+                })
+            );
+            data.data = mappedLocations.map((location, index) => {
+                if (location.error) {
+                    return { ...data.data[index], location: null, category: null, subcategory: null, error: location.error };
+                }
+                return { ...data.data[index], location: [location.lat, location.long], category: location.category, subcategory: location.subcategory };
+            });
+        }
         res.status(200).json(data);
     } catch (error) {
         res.status(500).json({ message: 'Internal Server Error' });

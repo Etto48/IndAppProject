@@ -118,11 +118,14 @@ a {
   border-radius: 40px;
   cursor: pointer;
 
-  display: none;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.2s ease-in-out;
 }
 
 .reset-view-button.active {
-  display: block;
+  visibility: visible;
+  opacity: 1;
 }
 
 .marker-list-container {
@@ -134,4 +137,29 @@ a {
 .marker-list ul {
   list-style: none;
   padding: 0;
+}
+
+.location-button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px;
+  font-size: 16px;
+  margin-bottom: 10px;
+  background-color: var(--component-background);
+  border-radius: 5px;
+  color: var(--foreground-important);
+  width: 100%;
+}
+
+.location-button-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.location-button img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
 }

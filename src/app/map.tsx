@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
@@ -6,73 +6,137 @@ import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from "re
 
 
 type MapViewProps = {
-    currentLocation: [number, number];
-    markers?: Array<{ position: [number, number], popupText: string }>;
+    currentLocation: [number, number] | null;
+    focusOn: [number, number] | null;
+    setFocusOn: (focusOn: [number, number] | null) => void;
+    markers?: Array<LocationMarkerProps>;
 };
+
+const iconSize = 60;
 
 const currentLocationIcon = new Icon({
     iconUrl: './current_location.svg',
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-    popupAnchor: [0, -40],
+    iconSize: [iconSize, iconSize],
+    iconAnchor: [iconSize/2, iconSize],
+    popupAnchor: [0, -iconSize],
 });
 
 const hotelIcon = new Icon({
     iconUrl: './hotel.svg',
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-    popupAnchor: [0, -40],
+    iconSize: [iconSize, iconSize],
+    iconAnchor: [iconSize/2, iconSize],
+    popupAnchor: [0, -iconSize],
 });
 
-function DetectMapDrag({ setMapMoved }: { setMapMoved: (moved: boolean) => void }) {
+const restaurantIcon = new Icon({
+    iconUrl: './restaurant.svg',
+    iconSize: [iconSize, iconSize],
+    iconAnchor: [iconSize/2, iconSize],
+    popupAnchor: [0, -iconSize],
+});
+
+const attractionIcon = new Icon({
+    iconUrl: './attraction.svg',
+    iconSize: [iconSize, iconSize],
+    iconAnchor: [iconSize/2, iconSize],
+    popupAnchor: [0, -iconSize],
+});
+
+const geoIcon = new Icon({
+    iconUrl: './geo.svg',
+    iconSize: [iconSize, iconSize],
+    iconAnchor: [iconSize/2, iconSize],
+    popupAnchor: [0, -iconSize],
+});
+
+const unknownIcon = new Icon({
+    iconUrl: './unknown.svg',
+    iconSize: [iconSize, iconSize],
+    iconAnchor: [iconSize/2, iconSize],
+    popupAnchor: [0, -iconSize],
+});
+
+function DetectMapEvents({ 
+    setMapMoved, 
+    centerMap, 
+    setCenterMap,
+    setFocusOn
+}: { 
+    setMapMoved: (moved: boolean) => void, 
+    centerMap: boolean, 
+    setCenterMap: (centerMap: boolean) => void,
+    setFocusOn: (focusOn: [number, number] | null) => void
+}) {
     const events = useMapEvents({
         drag: () => {
             setMapMoved(true);
+            setFocusOn(null);
         },
         zoom: () => {
-            
+           setCenterMap(!centerMap);
         }
     })
     return null;
 }
 
-function ChangeMapView({ center, moved }: { center: [number, number], moved: boolean }) {
+function ChangeMapView({ center, moved, centerMap, focusOn }: { center: [number, number] | null, moved: boolean , centerMap: boolean, focusOn: [number, number] | null }) {
     const map = useMap();
     useEffect(() => {
-        if (!moved) {
-            map.panTo(center, { animate: true, duration: 0.5 });
+        if ((!moved && center) || focusOn) {
+            let target: [number, number] | null = focusOn || center;
+            if (target) { // This is always true
+                map.panTo(target, { animate: true, duration: 0.5 });
+            }
         }
-    }, [center, moved, map]);
+    }, [center, moved, map, centerMap, focusOn]);
     return null;
 }
 
-export default function Map({currentLocation, markers}: MapViewProps) {
+function selectIcon(category: string): Icon {
+    switch (category) {
+        case 'hotel':
+            return hotelIcon;
+        case 'restaurant':
+            return restaurantIcon;
+        case 'attraction':
+            return attractionIcon;
+        case 'geo':
+            return geoIcon;
+        default:
+            return unknownIcon;
+    }
+} 
+
+export default function Map({currentLocation, markers, focusOn, setFocusOn}: MapViewProps) {
     const [centerMap, setCenterMap] = useState(false);
     const [mapMoved, setMapMoved] = useState(false);
+    const mapCenter: [number, number] = currentLocation ? currentLocation : [43.7230, 10.3966]; // Default center if no location is provided
     return (
         <>
-        <MapContainer center={currentLocation} zoom={15} className="map" key={centerMap ? "reset" : "default"}>
+        <MapContainer center={mapCenter} zoom={15} className="map">
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <Marker position={currentLocation} icon={currentLocationIcon}>
-                <Popup>
-                    You are here!
-                </Popup>
-            </Marker>
-            {markers && markers.map((marker, index) => (
-                <Marker key={index} position={marker.position} icon={hotelIcon}>
+            {currentLocation &&
+                <Marker position={currentLocation} icon={currentLocationIcon}>
                     <Popup>
-                        {marker.popupText}
+                        You are here!
+                    </Popup>
+                </Marker>}
+            {markers && markers.map((marker, index) => (
+                <Marker key={index} position={marker.position} icon={selectIcon(marker.category)}>
+                    <Popup>
+                        {marker.name}
                     </Popup>
                 </Marker>
             ))}
-            <DetectMapDrag setMapMoved={setMapMoved}/>
-            <ChangeMapView center={currentLocation} moved={mapMoved}/>
+            <DetectMapEvents setMapMoved={setMapMoved} centerMap={centerMap} setCenterMap={setCenterMap} setFocusOn={setFocusOn}/>
+            <ChangeMapView center={currentLocation} moved={mapMoved} centerMap={centerMap} focusOn={focusOn}/>
         </MapContainer>
-        <button className={"reset-view-button" + (mapMoved? " active" : "")} onClick={() => {
+        <button className={"reset-view-button" + ((mapMoved || focusOn)? " active" : "")} onClick={() => {
             setCenterMap(!centerMap);
+            setFocusOn(null);
             setMapMoved(false);
         }}>Reset map</button>
         </>
