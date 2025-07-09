@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useGeolocated } from "react-geolocated";
 import LocationButton from "./location_button";
 import { locationDistance, locationMarkerPropsToRelativeMarkerProps } from "./utils";
+import { LocationMarkerProps } from "./types";
 const Map = dynamic(() => import("./map"), {
     ssr: false,
 });
@@ -56,13 +57,25 @@ function updateAiDescription(
                 "poi": query_data,
             }
         ),
-    }).then(response => {
+    }).then(async response => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        return response.text();
-    }).then(data => {
-        setAiDescription(data);
+        if (!response.body) {
+            return;
+        }
+        setAiDescription('');
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let currentDescription = '';
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
+                break;
+            }
+            currentDescription += decoder.decode(value);
+            setAiDescription(currentDescription);
+        }
     }).catch(error => {
         console.error('Error fetching LLM data:', error);
     });

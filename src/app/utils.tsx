@@ -1,3 +1,5 @@
+import { LocationMarkerProps, RelativeMarkerProps } from "./types";
+
 export function locationDistance(loc1: [number, number], loc2: [number, number]): number {
     const R = 6371e3; // metres
     const φ1 = loc1[0] * Math.PI / 180; // φ in radians
