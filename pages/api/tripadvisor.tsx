@@ -10,7 +10,8 @@ type LocationDetails = {
     lat: number,
     long: number,
     category: string,
-    subcategory: string
+    subcategory: string,
+    description: string 
 }
 
 let locationCache: Record<string, LocationDetails> = {};
@@ -40,6 +41,7 @@ async function getLocationInfo(location_id: string, apiKey: string): Promise<Loc
             long: detailsData.longitude,
             category: detailsData.category.name,
             subcategory: detailsData.subcategory.name,
+            description: detailsData.description
         };
         locationCache[location_id] = details;
         return details;
@@ -89,6 +91,7 @@ export default async function handler(
                             long: locationDetails.long,
                             category: locationDetails.category || 'unknown',
                             subcategory: locationDetails.subcategory || 'unknown',
+                            description: locationDetails.description || '',
                         };
                     } catch (error) {
                         return { error: error }
@@ -99,7 +102,12 @@ export default async function handler(
                 if (location.error) {
                     return { ...data.data[index], location: null, category: null, subcategory: null, error: location.error };
                 }
-                return { ...data.data[index], location: [location.lat, location.long], category: location.category, subcategory: location.subcategory };
+                return { ...data.data[index], 
+                    location: [location.lat, location.long], 
+                    category: location.category, 
+                    subcategory: location.subcategory, 
+                    description: location.description
+                };
             });
         }
         res.status(200).json(data);

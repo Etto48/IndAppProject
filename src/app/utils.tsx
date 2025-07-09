@@ -20,3 +20,17 @@ export function formatDistance(distance: number): string {
         return `${(distance / 1000).toFixed(1)} km`;
     }
 }
+
+export function locationMarkerPropsToRelativeMarkerProps(
+    marker: LocationMarkerProps,
+    currentLocation: [number, number]
+): RelativeMarkerProps {
+    const distance = locationDistance(currentLocation, marker.position);
+    return {
+        distance: distance,
+        name: marker.name,
+        category: marker.category,
+        subcategory: marker.subcategory,
+        description: marker.description
+    };
+}
