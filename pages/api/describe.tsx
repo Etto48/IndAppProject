@@ -1,16 +1,23 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Ollama } from 'ollama';
+import { NextRequest } from 'next/server';
+import { Ollama } from 'ollama/browser';
+
+export const runtime = 'edge';
 
 const targetUrl = 'http://localhost:11434/';
-const modelName = 'deepseek-r1:1.5b';
+const modelName = 'llama3.2:3b';
 const ollama = new Ollama({
     host: targetUrl,
 })
 
 
-function createPrompt({poi}: {poi: Array<RelativeMarkerProps>}): string {
-    let prompt = "Briefly tell the user in a conversational tone what kind of locations there are nearby. "+
-        "Directly speak to the user without any preamble or introduction. Do not repeat the instructions. "+
+function createPrompt(poi: Array<RelativeMarkerProps>): string {
+    let prompt = "Briefly explain what kind of locations there are nearby, highlighting high concentrations "+
+        "of the same kind of structures and suggest what activities might be worth doing in this place. "+
+        "Ignore duplicates and locations that seem too strange or irrelevant for a tourist. "+
+        "Directly speak to the user without any preamble or introduction. Do not repeat the instructions "+
+        "nor the exact list that will follow. Do not make any explicit reference to the list or the prompt. "+
+        "Respond with a single sentence that summarizes the information and would be suitable for spoken language. "+
         "You will be provided a list of locations with each entry in the format "+
         "\"- name: <name of the location>, "+
         "category: <hotel, restaurant, attraction, geo or unknown>, "+
@@ -24,37 +31,55 @@ function createPrompt({poi}: {poi: Array<RelativeMarkerProps>}): string {
     return prompt;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextRequest) {
     if (req.method !== 'POST') {
-        res.setHeader('Allow', ['POST']);
-        return res.status(405).end(`Method ${req.method} Not Allowed`);
-    }   
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache'); 
+        return new Response('Method Not Allowed', {
+            status: 405,
+            headers: {
+                'Allow': 'POST',
+                'Content-Type': 'text/plain',
+            },
+        });
+    }
+    const body = await req.json();
+    const poi = body.poi as Array<RelativeMarkerProps>;
+    if (!poi || poi.length === 0) {
+        return new Response('Bad Request: No points of interest provided.', {
+            status: 400,
+            headers: {
+                'Content-Type': 'text/plain',
+            },
+        });
+    }
     try {
         const response = await ollama.generate({
             model: modelName,
-            prompt: createPrompt(req.body),
+            prompt: createPrompt(poi),
             stream: true,
         });
         
-        let thinking = false;
-        for await (const chunk of response) {
-            if (chunk.response === '<think>') {
-                thinking = true;
-                continue;
-            } else if (chunk.response === '</think>') {
-                thinking = false;
-                continue;
+        const textEncoder = new TextEncoder();
+        const stream = new ReadableStream({
+            async start(controller) {
+                for await (const chunk of response) {
+                    controller.enqueue(textEncoder.encode(chunk.response));
+                }
+                controller.close();
             }
-            if (!thinking) {
-                res.write(chunk.response);
-            }
-        }
-        res.end();
-
+        });
+        return new Response(stream, {
+            headers: {
+                'Content-Type': 'text/event-stream',
+                'Cache-Control': 'no-cache',
+            },
+        });
     } catch (error) {
         console.error('Error generating response:', error);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        return new Response('Internal Server Error', {
+            status: 500,
+            headers: {
+                'Content-Type': 'text/plain',
+            },
+        });
     }
 };

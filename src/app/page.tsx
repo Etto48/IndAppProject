@@ -50,19 +50,46 @@ function updateAiDescription(
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Accept': 'text/plain',
+            'Cache-Control': 'no-cache',
+            'Transfer-Encoding': 'chunked',
+            'Connection': 'keep-alive',
         },
         body: JSON.stringify(
             {
                 "poi": query_data,
             }
         ),
-    }).then(response => {
+    }).then(async response => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        return response.text();
-    }).then(data => {
-        setAiDescription(data);
+        if (!response.body) {
+            throw new Error('Response body is null');
+        }
+        setAiDescription('Thinking...');
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let currentDescription = '';
+        let thinking = false;
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
+                break;
+            }
+            let chunk = decoder.decode(value, { stream: true });
+            if (chunk === "<think>") {
+                thinking = true;
+                continue;
+            } else if (chunk === "</think>") {
+                thinking = false;
+                continue;
+            }
+            if (!thinking) {
+                currentDescription += chunk;
+                setAiDescription(currentDescription);
+            }
+        }
     }).catch(error => {
         console.error('Error fetching LLM data:', error);
     });
