@@ -19,6 +19,7 @@ function createPrompt(poi: Array<RelativeMarkerProps>): string {
         "Don't mention duplicates and skip anything that seems too odd or irrelevant for a tourist. "+
         "Speak directly to the user, using natural, conversational language in a single sentence. "+
         "Don't mention the input list or this prompt, and avoid repeating any names or instructions. "+
+        "Write at most 2 sentences. "+
         "You'll receive a list of locations in the format "+
         "- name: \"<name of the location>\", "+
         "category: \"<hotel, restaurant, attraction, geo or unknown>\", "+

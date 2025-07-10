@@ -1,3 +1,5 @@
+import { playPCMChunk } from './audio';
+
 export async function tts(text: string) {
     const encodedText = encodeURIComponent(text);
     const res = await fetch(`/api/tts?text=${encodedText}`, {
@@ -13,5 +15,7 @@ export async function tts(text: string) {
             break;
         }
         console.log('Received audio chunk',);
+        console.log(value);
+        playPCMChunk(value);
     }
 }
