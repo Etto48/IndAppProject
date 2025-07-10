@@ -3,6 +3,7 @@ import { NextRequest } from "next/server";
 export const runtime = 'edge';
 
 export default async function handler(req: NextRequest): Promise<Response> {
+    const ttsUrl = process.env.PIPER_URL || 'http://localhost:5000/';
     if (req.method !== 'GET') {
         return new Response('Method Not Allowed', {
             status: 405,
@@ -23,7 +24,7 @@ export default async function handler(req: NextRequest): Promise<Response> {
     }
     try {
         const encodedText = encodeURIComponent(text);
-        const res = await fetch(`http://localhost:5000/predict?text=${encodedText}`, {
+        const res = await fetch(`${ttsUrl}/predict?text=${encodedText}`, {
             method: 'GET',
         });
         if (!res.ok) {

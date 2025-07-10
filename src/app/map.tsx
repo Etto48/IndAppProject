@@ -17,7 +17,6 @@ type MapContentsProps = {
     setCenterMap: (centerMap: boolean) => void;
     mapMoved: boolean;
     setMapMoved: (moved: boolean) => void;
-    mapReady?: boolean;
 } & MapViewProps;
 
 type DetectMapEventsProps = { 
@@ -172,11 +171,7 @@ function selectIcon(category: string, active: boolean): Icon {
     }
 } 
 
-function MapContents({ currentLocation, markers, focusOn, setFocusOn, centerMap, setCenterMap, mapMoved, setMapMoved, mapReady }: MapContentsProps) {
-    if (mapReady === false) {
-        return <></>;
-    }
-    
+function MapContents({ currentLocation, markers, focusOn, setFocusOn, centerMap, setCenterMap, mapMoved, setMapMoved }: MapContentsProps) {
     return (
         <>
         <TileLayer
@@ -205,11 +200,10 @@ function MapContents({ currentLocation, markers, focusOn, setFocusOn, centerMap,
 export default function Map({currentLocation, markers, focusOn, setFocusOn}: MapViewProps) {
     const [centerMap, setCenterMap] = useState(false);
     const [mapMoved, setMapMoved] = useState(false);
-    const [mapReady, setMapReady] = useState(false);
     const mapCenter: [number, number] = currentLocation ? currentLocation : [43.7230, 10.3966]; // Default center if no location is provided
     return (
         <>
-        <MapContainer center={mapCenter} zoom={15} className="map" whenReady={() => setMapReady(true)}>
+        <MapContainer center={mapCenter} zoom={15} className="map">
             <MapContents 
                 currentLocation={currentLocation}
                 markers={markers}
@@ -219,7 +213,6 @@ export default function Map({currentLocation, markers, focusOn, setFocusOn}: Map
                 setCenterMap={setCenterMap}
                 mapMoved={mapMoved}
                 setMapMoved={setMapMoved}
-                mapReady={mapReady}
             />
         </MapContainer>
         <button className={"reset-view-button" + ((mapMoved || focusOn)? " active" : "")} onClick={() => {

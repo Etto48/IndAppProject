@@ -1,0 +1,5 @@
+# Ignore build artifacts and dependencies
+../.next/
+../.venv/
+../node_modules/
+../certificates/

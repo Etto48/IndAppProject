@@ -5,7 +5,7 @@ import { Ollama } from 'ollama/browser';
 
 export const runtime = 'edge';
 
-const targetUrl = 'http://localhost:11434/';
+const targetUrl = process.env.OLLAMA_URL || 'http://localhost:11434/';
 const modelName = 'llama3.2:3b';
 const ollama = new Ollama({
     host: targetUrl,
