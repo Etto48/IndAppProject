@@ -5,15 +5,6 @@ type ResponseData = {
     message: string
 }
 
-type LocationDetails = {
-    location_id: string,
-    lat: number,
-    long: number,
-    category: string,
-    subcategory: string,
-    description: string 
-}
-
 let locationCache: Record<string, LocationDetails> = {};
 
 async function getLocationInfo(location_id: string, apiKey: string): Promise<LocationDetails> {
@@ -35,13 +26,13 @@ async function getLocationInfo(location_id: string, apiKey: string): Promise<Loc
         }
 
         const detailsData = await detailsResponse.json();
+        console.log(`Fetched details for location ${location_id}:`, detailsData);
         let details = {
-            location_id: location_id,
-            lat: detailsData.latitude,
-            long: detailsData.longitude,
-            category: detailsData.category.name,
-            subcategory: detailsData.subcategory.name,
-            description: detailsData.description
+            position: [detailsData.latitude, detailsData.longitude] as [number, number],
+            address: detailsData.address_obj.address_string,
+            category: detailsData.category.name || 'unknown',
+            description: detailsData.description || '',
+            rating: (detailsData.rating && +detailsData.rating) || undefined,
         };
         locationCache[location_id] = details;
         return details;
@@ -83,30 +74,25 @@ export default async function handler(
         const data = await apiResponse.json();
         if (data && data.data) {
             const mappedLocations = await Promise.all(
-                data.data.map(async (location: { location_id: string }) => {
+                data.data.map(async (location: { location_id: string }): Promise<LocationDetails | {error: any}> => {
                     try {
                         const locationDetails = await getLocationInfo(location.location_id, apiKey);
-                        return {
-                            lat: locationDetails.lat,
-                            long: locationDetails.long,
-                            category: locationDetails.category || 'unknown',
-                            subcategory: locationDetails.subcategory || 'unknown',
-                            description: locationDetails.description || '',
-                        };
+                        return locationDetails;
                     } catch (error) {
                         return { error: error }
                     }
                 })
             );
-            data.data = mappedLocations.map((location, index) => {
+            data.data = mappedLocations.map((location, index): MaybeLocationMarkerProps => {
                 if (location.error) {
-                    return { ...data.data[index], location: null, category: null, subcategory: null, error: location.error };
+                    return {
+                        name: data.data[index].name,
+                        error: location.error,
+                    };
                 }
-                return { ...data.data[index], 
-                    location: [location.lat, location.long], 
-                    category: location.category, 
-                    subcategory: location.subcategory, 
-                    description: location.description
+                return { 
+                    name: data.data[index].name, 
+                    ...location,
                 };
             });
         }

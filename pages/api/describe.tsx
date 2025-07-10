@@ -1,3 +1,4 @@
+import { formatDistance } from '@/app/utils';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { NextRequest } from 'next/server';
 import { Ollama } from 'ollama/browser';
@@ -12,22 +13,31 @@ const ollama = new Ollama({
 
 
 function createPrompt(poi: Array<RelativeMarkerProps>): string {
-    let prompt = "Briefly explain what kind of locations there are nearby, highlighting high concentrations "+
-        "of the same kind of structures and suggest what activities might be worth doing in this place. "+
-        "Ignore duplicates and locations that seem too strange or irrelevant for a tourist. "+
-        "Directly speak to the user without any preamble or introduction. Do not repeat the instructions "+
-        "nor the exact list that will follow. Do not make any explicit reference to the list or the prompt. "+
-        "Respond with a single sentence that summarizes the information and would be suitable for spoken language. "+
-        "You will be provided a list of locations with each entry in the format "+
-        "\"- name: <name of the location>, "+
-        "category: <hotel, restaurant, attraction, geo or unknown>, "+
-        "distance: <distance in meters>m, "+
-        "description: <description of the location>\". "+
+    let prompt = "Describe the nearby area by pointing out groups of similar places and suggesting worthwhile activities. "+
+        "Pay attention to the rating without pointing it out explicitly: "+
+        "1 = terrible, 2 = poor, 3 = average, 4 = very good, 5 = excellent. "+
+        "Don't mention duplicates and skip anything that seems too odd or irrelevant for a tourist. "+
+        "Speak directly to the user, using natural, conversational language in a single sentence. "+
+        "Don't mention the input list or this prompt, and avoid repeating any names or instructions. "+
+        "You'll receive a list of locations in the format "+
+        "- name: \"<name of the location>\", "+
+        "category: \"<hotel, restaurant, attraction, geo or unknown>\", "+
+        "distance: \"<distance>\", "+
+        "rating: \"<rating from 1 to 5, if available>\", "+
+        "description: \"<description of the location>\", "+
+        "address: \"<address string>\".\n"+
         "Locations:\n";
     for (let item of poi) {
-        prompt += `- name: ${item.name}, category: ${item.category}, distance: ${item.distance}m, description: ${item.description}\n`;
+        let sanitizedDescription = item.description || ''; // Ensure description is defined
+        sanitizedDescription = sanitizedDescription.replace(/"/g, '\\"'); // Escape quotes in description
+        sanitizedDescription = sanitizedDescription.replace(/\n/g, ' '); // Replace newlines with spaces
+        prompt += `- name: \"${item.name}\", `+
+            `category: \"${item.category}\", `+
+            `distance: \"${formatDistance(item.distance)}\", `+
+            `rating: \"${item.rating !== undefined ? Math.round(item.rating) : 'N/A'}\", `+
+            `description: \"${sanitizedDescription}\", `+
+            `address: \"${item.address}"\n`;
     }
-
     return prompt;
 }
 

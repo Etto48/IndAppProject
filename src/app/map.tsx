@@ -7,9 +7,24 @@ import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from "re
 
 type MapViewProps = {
     currentLocation: [number, number] | null;
-    focusOn: [number, number] | null;
-    setFocusOn: (focusOn: [number, number] | null) => void;
+    focusOn: LocationMarkerProps | null;
+    setFocusOn: (focusOn: LocationMarkerProps | null) => void;
     markers?: Array<LocationMarkerProps>;
+};
+
+type MapContentsProps = {
+    centerMap: boolean;
+    setCenterMap: (centerMap: boolean) => void;
+    mapMoved: boolean;
+    setMapMoved: (moved: boolean) => void;
+    mapReady?: boolean;
+} & MapViewProps;
+
+type DetectMapEventsProps = { 
+    setMapMoved: (moved: boolean) => void, 
+    centerMap: boolean, 
+    setCenterMap: (centerMap: boolean) => void,
+    setFocusOn: (focusOn: LocationMarkerProps | null) => void
 };
 
 const iconSize = 60;
@@ -56,17 +71,47 @@ const unknownIcon = new Icon({
     popupAnchor: [0, -iconSize],
 });
 
+const hotelActiveIcon = new Icon({
+    iconUrl: './hotel_active.svg',
+    iconSize: [iconSize, iconSize],
+    iconAnchor: [iconSize/2, iconSize],
+    popupAnchor: [0, -iconSize],
+});
+
+const restaurantActiveIcon = new Icon({
+    iconUrl: './restaurant_active.svg',
+    iconSize: [iconSize, iconSize],
+    iconAnchor: [iconSize/2, iconSize],
+    popupAnchor: [0, -iconSize],
+});
+
+const attractionActiveIcon = new Icon({
+    iconUrl: './attraction_active.svg',
+    iconSize: [iconSize, iconSize],
+    iconAnchor: [iconSize/2, iconSize],
+    popupAnchor: [0, -iconSize],
+});
+
+const geoActiveIcon = new Icon({
+    iconUrl: './geo_active.svg',
+    iconSize: [iconSize, iconSize],
+    iconAnchor: [iconSize/2, iconSize],
+    popupAnchor: [0, -iconSize],
+});
+
+const unknownActiveIcon = new Icon({
+    iconUrl: './unknown_active.svg',
+    iconSize: [iconSize, iconSize],
+    iconAnchor: [iconSize/2, iconSize],
+    popupAnchor: [0, -iconSize],
+});
+
 function DetectMapEvents({ 
     setMapMoved, 
     centerMap, 
     setCenterMap,
     setFocusOn
-}: { 
-    setMapMoved: (moved: boolean) => void, 
-    centerMap: boolean, 
-    setCenterMap: (centerMap: boolean) => void,
-    setFocusOn: (focusOn: [number, number] | null) => void
-}) {
+}: DetectMapEventsProps) {
     const events = useMapEvents({
         drag: () => {
             setMapMoved(true);
@@ -79,11 +124,11 @@ function DetectMapEvents({
     return null;
 }
 
-function ChangeMapView({ center, moved, centerMap, focusOn }: { center: [number, number] | null, moved: boolean , centerMap: boolean, focusOn: [number, number] | null }) {
+function ChangeMapView({ center, moved, centerMap, focusOn }: { center: [number, number] | null, moved: boolean , centerMap: boolean, focusOn: LocationMarkerProps | null }) {
     const map = useMap();
     useEffect(() => {
         if ((!moved && center) || focusOn) {
-            let target: [number, number] | null = focusOn || center;
+            let target: [number, number] | null = focusOn?.position || center;
             if (target) { // This is always true
                 map.panTo(target, { animate: true, duration: 0.5 });
             }
@@ -92,29 +137,49 @@ function ChangeMapView({ center, moved, centerMap, focusOn }: { center: [number,
     return null;
 }
 
-function selectIcon(category: string): Icon {
+function selectIcon(category: string, active: boolean): Icon {
     switch (category) {
         case 'hotel':
-            return hotelIcon;
+            if (active) {
+                return hotelActiveIcon;
+            } else {
+                return hotelIcon;
+            }
         case 'restaurant':
-            return restaurantIcon;
+            if (active) {
+                return restaurantActiveIcon;
+            } else {
+                return restaurantIcon;
+            }
         case 'attraction':
-            return attractionIcon;
+            if (active) {
+                return attractionActiveIcon;
+            } else {
+                return attractionIcon;
+            }
         case 'geo':
-            return geoIcon;
+            if (active) {
+                return geoActiveIcon;
+            } else {
+                return geoIcon;
+            }
         default:
-            return unknownIcon;
+            if (active) {
+                return unknownActiveIcon;
+            } else {
+                return unknownIcon; // Fallback icon
+            }
     }
 } 
 
-export default function Map({currentLocation, markers, focusOn, setFocusOn}: MapViewProps) {
-    const [centerMap, setCenterMap] = useState(false);
-    const [mapMoved, setMapMoved] = useState(false);
-    const mapCenter: [number, number] = currentLocation ? currentLocation : [43.7230, 10.3966]; // Default center if no location is provided
+function MapContents({ currentLocation, markers, focusOn, setFocusOn, centerMap, setCenterMap, mapMoved, setMapMoved, mapReady }: MapContentsProps) {
+    if (mapReady === false) {
+        return <></>;
+    }
+    
     return (
         <>
-        <MapContainer center={mapCenter} zoom={15} className="map">
-            <TileLayer
+        <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
@@ -125,7 +190,7 @@ export default function Map({currentLocation, markers, focusOn, setFocusOn}: Map
                     </Popup>
                 </Marker>}
             {markers && markers.map((marker, index) => (
-                <Marker key={index} position={marker.position} icon={selectIcon(marker.category)}>
+                <Marker key={index} position={marker.position} icon={selectIcon(marker.category, marker === focusOn)} zIndexOffset={marker === focusOn ? 1000 : 0}>
                     <Popup>
                         {marker.name}
                     </Popup>
@@ -133,6 +198,29 @@ export default function Map({currentLocation, markers, focusOn, setFocusOn}: Map
             ))}
             <DetectMapEvents setMapMoved={setMapMoved} centerMap={centerMap} setCenterMap={setCenterMap} setFocusOn={setFocusOn}/>
             <ChangeMapView center={currentLocation} moved={mapMoved} centerMap={centerMap} focusOn={focusOn}/>
+        </>
+    )
+}
+
+export default function Map({currentLocation, markers, focusOn, setFocusOn}: MapViewProps) {
+    const [centerMap, setCenterMap] = useState(false);
+    const [mapMoved, setMapMoved] = useState(false);
+    const [mapReady, setMapReady] = useState(false);
+    const mapCenter: [number, number] = currentLocation ? currentLocation : [43.7230, 10.3966]; // Default center if no location is provided
+    return (
+        <>
+        <MapContainer center={mapCenter} zoom={15} className="map" whenReady={() => setMapReady(true)}>
+            <MapContents 
+                currentLocation={currentLocation}
+                markers={markers}
+                focusOn={focusOn}
+                setFocusOn={setFocusOn}
+                centerMap={centerMap}
+                setCenterMap={setCenterMap}
+                mapMoved={mapMoved}
+                setMapMoved={setMapMoved}
+                mapReady={mapReady}
+            />
         </MapContainer>
         <button className={"reset-view-button" + ((mapMoved || focusOn)? " active" : "")} onClick={() => {
             setCenterMap(!centerMap);

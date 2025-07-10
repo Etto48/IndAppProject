@@ -11,7 +11,8 @@ const Map = dynamic(() => import("./map"), {
 function updateMarkers(
     setMarkers: (markers: Array<LocationMarkerProps>) => void,
     setAiDescription: (description: string) => void,
-    currentLocation: [number, number]
+    setAiDescriptionLoading: (loading: boolean) => void,
+    currentLocation: [number, number],
 ) {
     fetch(`/api/tripadvisor?lat=${currentLocation[0]}&long=${currentLocation[1]}`)
         .then(response => {
@@ -21,15 +22,10 @@ function updateMarkers(
             return response.json();
         }).then(data => {
             const validMarkers = data.data
-                .filter((item: { location: [number, number] | null, category: string | null }) => item.location !== null && item.category !== null)
-                .map((item: { location: [number, number]; name: string, category: string }) => ({
-                    position: item.location,
-                    category: item.category || 'unknown',
-                    name: item.name,
-                }));
+                .filter((item: MaybeLocationMarkerProps) => "error" in item === false )
             setMarkers(validMarkers);
             
-            updateAiDescription(setAiDescription, currentLocation, validMarkers);
+            updateAiDescription(setAiDescription, setAiDescriptionLoading, currentLocation, validMarkers);
         }).catch(error => {
             console.error('Error fetching data:', error);
         });
@@ -37,8 +33,9 @@ function updateMarkers(
 
 function updateAiDescription(
     setAiDescription: (description: string) => void,
+    setAiDescriptionLoading: (loading: boolean) => void,
     currentLocation: [number, number],
-    markers: Array<LocationMarkerProps>
+    markers: Array<LocationMarkerProps>,
 ) {
     if (markers.length === 0) {
         return;
@@ -46,6 +43,7 @@ function updateAiDescription(
     let query_data = markers.map(marker => {
         return locationMarkerPropsToRelativeMarkerProps(marker, currentLocation);
     })
+    setAiDescriptionLoading(true);
     fetch('/api/describe', {
         method: 'POST',
         headers: {
@@ -78,20 +76,26 @@ function updateAiDescription(
                 break;
             }
             let chunk = decoder.decode(value, { stream: true });
-            if (chunk === "<think>") {
+            if (chunk.startsWith("<think>")) {
                 thinking = true;
                 continue;
-            } else if (chunk === "</think>") {
+            } else if (chunk.includes("</think>")) {
+                chunk = chunk.split("</think>")[1];
                 thinking = false;
-                continue;
+                if (!chunk) {
+                    continue;    
+                }
             }
             if (!thinking) {
                 currentDescription += chunk;
                 setAiDescription(currentDescription);
             }
         }
+        setAiDescriptionLoading(false);
     }).catch(error => {
         console.error('Error fetching LLM data:', error);
+        setAiDescriptionLoading(false);
+        setAiDescription('Error generating AI description.');
     });
 }
 
@@ -100,7 +104,8 @@ export default function Home() {
         
     ]);
     const [aiDescription, setAiDescription] = useState<string>('');
-    const [focusOn, setFocusOn] = useState<[number, number] | null>(null);
+    const [aiDescriptionLoading, setAiDescriptionLoading] = useState<boolean>(false);
+    const [focusOn, setFocusOn] = useState<LocationMarkerProps | null>(null);
     const { coords, isGeolocationAvailable, isGeolocationEnabled } =
             useGeolocated({
                 positionOptions: {
@@ -114,29 +119,42 @@ export default function Home() {
     const locationThreshold = 500; // metres
     useEffect(() => {
         if (currentLocation !== null && (oldLocation === null || locationDistance(oldLocation, currentLocation) > locationThreshold)) {
-            updateMarkers(setMarkers, setAiDescription, currentLocation);
+            updateMarkers(setMarkers, setAiDescription, setAiDescriptionLoading, currentLocation);
             setOldLocation(currentLocation);
         }
     }, [currentLocation]);
     return (
         <div className="container">
             <div className="map-container">
-                <Map currentLocation={currentLocation} focusOn={focusOn} setFocusOn={setFocusOn} markers={markers}/>
+                <Map 
+                    currentLocation={currentLocation} 
+                    focusOn={focusOn} 
+                    setFocusOn={setFocusOn} 
+                    markers={markers}
+                />
             </div>
             <div className="marker-list-container">
                 <div className="marker-list">
-                    <h2>Markers</h2>
-                    {markers.map((marker, index) => (
-                        <LocationButton currentLocation={currentLocation} marker={marker} key={index} setFocusOn={setFocusOn}/>
-                    ))}
-                    <h2>AI Description</h2>
+                    <h2>Overview</h2>
                     <div className="ai-description">
-                        {aiDescription ? (
-                            <p>{aiDescription}</p>
-                        ) : (
-                            <p>Loading AI description...</p>
+                        <p className={"ai-description-text " + (aiDescriptionLoading ? "loading": "")}>
+                        {aiDescription ? aiDescription : (
+                            aiDescriptionLoading ?
+                                "Loading AI description..." :
+                                "No AI description available."
                         )}
+                        </p>
                     </div>
+                    <h2>Points of interest</h2>
+                    {markers.map((marker, index) => (
+                        <LocationButton 
+                            currentLocation={currentLocation} 
+                            marker={marker} 
+                            focusOn={focusOn} 
+                            setFocusOn={setFocusOn} 
+                            key={index}
+                        />
+                    ))}
                 </div>
             </div>
         </div>

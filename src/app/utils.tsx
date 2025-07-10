@@ -28,9 +28,6 @@ export function locationMarkerPropsToRelativeMarkerProps(
     const distance = locationDistance(currentLocation, marker.position);
     return {
         distance: distance,
-        name: marker.name,
-        category: marker.category,
-        subcategory: marker.subcategory,
-        description: marker.description
+        ...marker
     };
 }

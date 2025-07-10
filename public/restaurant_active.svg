@@ -7,7 +7,7 @@
    viewBox="0 0 16.0 16.0"
    version="1.1"
    id="SVGRoot"
-   sodipodi:docname="current_location.svg"
+   sodipodi:docname="restaurant_active.svg"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -24,9 +24,9 @@
      inkscape:deskcolor="#505050"
      inkscape:document-units="px"
      showgrid="true"
-     inkscape:zoom="34.734034"
-     inkscape:cx="3.354059"
-     inkscape:cy="6.7513033"
+     inkscape:zoom="32.176883"
+     inkscape:cx="4.1178632"
+     inkscape:cy="7.2878408"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="1920"
@@ -47,11 +47,27 @@
        id="path2023"
        style="fill:#ff604f;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round"
        d="m 8,1 a 6,6 0 0 0 -6,6 6,6 0 0 0 1.9863281,4.451172 h -0.00977 l 0.09375,0.08398 L 8,15.089844 l 3.929688,-3.554688 0.09375,-0.08398 h -0.0098 A 6,6 0 0 0 14,7 6,6 0 0 0 8,1 Z" />
-    <circle
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.566929;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
-       id="path353"
-       cx="7.997828"
-       cy="6.9976087"
-       r="3.6989515" />
+    <path
+       style="fill:#8bb1cc;fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       d="m 6,10 c 0,1 1,1 1,0 V 6 C 7,6 7.5,6 7.5,5 V 3 h -2 V 5 C 5.5,6 6,6 6,6 Z"
+       id="path666"
+       sodipodi:nodetypes="ccccccccc" />
+    <path
+       style="fill:#8bb1cc;fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       d="m 9,10 c 0,1 1,1 1,0 V 7 C 10.265734,6.4289765 10.265734,5.9707167 10.265734,4.9707167 10.265734,3.9707167 10,3 9,3 v 3 z"
+       id="path2775"
+       sodipodi:nodetypes="ccccccc" />
+    <path
+       style="fill:#000000;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:round"
+       d="M 6,3 V 5"
+       id="path448" />
+    <path
+       style="fill:#000000;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:round"
+       d="M 7,3 V 5"
+       id="path450" />
+    <path
+       style="fill:#000000;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-linejoin:round"
+       d="M 6.5,3 V 5"
+       id="path454" />
   </g>
 </svg>
