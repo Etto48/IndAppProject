@@ -4,7 +4,7 @@ services:
       context: ollama
       dockerfile: Dockerfile
     container_name: ollama
-    ports:
+    expose:
       - "11434:11434"
 
   piper:
@@ -14,7 +14,33 @@ services:
     environment:
       - PIPER_VOICE=en_US-hfc_female-medium
     container_name: piper
+    expose:
+      - "5000:5000"
+      
+  travelmate:
+    build:
+      context: ../
+      dockerfile: docker/travelmate/Dockerfile
+    container_name: travelmate
+    environment:
+      - APP_MODE=prod
+      - OLLAMA_URL=http://ollama:11434
+      - PIPER_URL=http://piper:5000
     ports:
-      - "5000:5000"    
+      - "3000:3000"
+    depends_on:
+      - ollama
+      - piper
+    develop:
+      watch:
+        - path: ../
+          target: /app
+          action: sync
+          ignore:
+            - node_modules/
+            - .next/
+            - .venv/
+            - certificates/
 
+    
     
