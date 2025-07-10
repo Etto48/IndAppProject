@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useGeolocated } from "react-geolocated";
 import LocationButton from "./location_button";
 import { locationDistance, locationMarkerPropsToRelativeMarkerProps } from "./utils";
+import { tts } from "./tts";
 const Map = dynamic(() => import("./map"), {
     ssr: false,
 });
@@ -92,6 +93,7 @@ function updateAiDescription(
             }
         }
         setAiDescriptionLoading(false);
+        tts(currentDescription);
     }).catch(error => {
         console.error('Error fetching LLM data:', error);
         setAiDescriptionLoading(false);

@@ -26,7 +26,6 @@ async function getLocationInfo(location_id: string, apiKey: string): Promise<Loc
         }
 
         const detailsData = await detailsResponse.json();
-        console.log(`Fetched details for location ${location_id}:`, detailsData);
         let details = {
             position: [detailsData.latitude, detailsData.longitude] as [number, number],
             address: detailsData.address_obj.address_string,
