@@ -71,6 +71,7 @@ function updateAiDescription(
         const reader = response.body.getReader();
         const decoder = new TextDecoder('utf-8');
         let currentDescription = '';
+        let currentPhrase = '';
         let thinking = false;
         while (true) {
             const { done, value } = await reader.read();
@@ -89,12 +90,21 @@ function updateAiDescription(
                 }
             }
             if (!thinking) {
+                currentPhrase += chunk;
+                const endOfSentenceRegex = /(?<=[.!?])\s+/;
+                let sentences = currentPhrase.split(endOfSentenceRegex);
+                for (let s of sentences.slice(0, -1)) {
+                    tts(s);
+                }
+                currentPhrase = sentences[sentences.length - 1];
                 currentDescription += chunk;
                 setAiDescription(currentDescription);
             }
         }
         setAiDescriptionLoading(false);
-        tts(currentDescription);
+        if (currentPhrase && currentPhrase.trim().length > 0) {
+            tts(currentPhrase);
+        } 
     }).catch(error => {
         console.error('Error fetching LLM data:', error);
         setAiDescriptionLoading(false);
