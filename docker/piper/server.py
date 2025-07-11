@@ -23,7 +23,18 @@ def predict_stream(text: str):
         yield chunk
 
 @app.get("/predict")
-def predict(request: f.Request, text: str):
+@app.post("/predict")
+def predict(request: f.Request):
+    text = request.query_params.get("text")
+    if not text:
+        text = request.json().get("text", "")
+    if not text:
+        return Response(
+            content="Text parameter is required",
+            status_code=400,
+            media_type="text/plain"
+        )
+        
     return StreamingResponse(
         predict_stream(text),
         media_type="audio/L16",

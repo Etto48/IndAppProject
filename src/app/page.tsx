@@ -105,6 +105,7 @@ export default function Home() {
     const [markers, setMarkers] = useState<Array<LocationMarkerProps>>([
         
     ]);
+    const [muted, setMuted] = useState<boolean>(true);
     const [aiDescription, setAiDescription] = useState<string>('');
     const [aiDescriptionLoading, setAiDescriptionLoading] = useState<boolean>(false);
     const [focusOn, setFocusOn] = useState<LocationMarkerProps | null>(null);
@@ -136,6 +137,11 @@ export default function Home() {
                 />
             </div>
             <div className="marker-list-container">
+                <button className="unmute-button"  onClick={() => setMuted(!muted)}>
+                    <img src={muted ? "muted.svg" : "unmuted.svg"}
+                        alt={muted ? "Unmute" : "Mute"}
+                    />
+                </button>
                 <div className="marker-list">
                     <h2>Overview</h2>
                     <div className="ai-description">

@@ -232,3 +232,35 @@ button:active {
   background-size: 20px 16px;
   background-repeat: repeat-x;
 }
+
+.unmute-button {
+  position: fixed;
+  z-index: 1000;
+  top: 20px;
+  right: calc(100%/3 + 50px);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media screen and (max-width: 576px) {
+  .unmute-button {
+    right: 20px;
+    top: calc(100%/3*2 - 110px);
+  }
+}
+
+.unmute-button img {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+}
+
+@media (prefers-color-scheme: dark) {  
+  .unmute-button img {
+    filter: invert(1);
+  }
+}
