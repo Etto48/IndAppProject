@@ -1,9 +1,16 @@
 import { playPCMChunk } from './audio';
 
 export async function tts(text: string) {
-    const encodedText = encodeURIComponent(text);
-    const res = await fetch(`/api/tts?text=${encodedText}`, {
-        method: 'GET',
+    const res = await fetch(`/api/tts`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'audio/L16',
+            'Cache-Control': 'no-cache',
+            'Transfer-Encoding': 'chunked',
+            'Connection': 'keep-alive',
+        },
+        body: JSON.stringify({ text: text }),
     });
     if (!res.ok) {
         throw new Error('Failed to fetch TTS audio');

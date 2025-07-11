@@ -2,30 +2,34 @@ import { NextRequest } from "next/server";
 
 export const runtime = 'edge';
 
+const ttsUrl = process.env.PIPER_URL || 'http://localhost:5000/';
+
 export default async function handler(req: NextRequest): Promise<Response> {
-    const ttsUrl = process.env.PIPER_URL || 'http://localhost:5000/';
-    if (req.method !== 'GET') {
+    if (req.method !== 'POST') {
         return new Response('Method Not Allowed', {
             status: 405,
             headers: {
-                'Allow': 'GET',
-                'Content-Type': 'text/plain',
+                'Allow': 'POST',
+                'Content-Type': 'application/json',
             },
         });
     }
-    const text = req.nextUrl.searchParams.get('text');
+    const { text } = await req.json();
     if (!text) {
         return new Response('Bad Request: No text provided.', {
             status: 400,
             headers: {
-                'Content-Type': 'text/plain',
+                'Content-Type': 'application/json',
             },
         });
     }
     try {
-        const encodedText = encodeURIComponent(text);
-        const res = await fetch(`${ttsUrl}/predict?text=${encodedText}`, {
-            method: 'GET',
+        const res = await fetch(`${ttsUrl}/predict`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ text: text }),
         });
         if (!res.ok) {
             throw new Error('Failed to fetch TTS audio');

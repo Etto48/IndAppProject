@@ -1,4 +1,5 @@
 import fastapi as f
+from pydantic import BaseModel
 from fastapi.responses import StreamingResponse, Response
 import wave
 import uvicorn
@@ -22,18 +23,12 @@ def predict_stream(text: str):
     for chunk in voice.synthesize_stream_raw(text):
         yield chunk
 
-@app.get("/predict")
+class PredictRequestProps(BaseModel):
+    text: str
+
 @app.post("/predict")
-def predict(request: f.Request):
-    text = request.query_params.get("text")
-    if not text:
-        text = request.json().get("text", "")
-    if not text:
-        return Response(
-            content="Text parameter is required",
-            status_code=400,
-            media_type="text/plain"
-        )
+def predict(props: PredictRequestProps):
+    text = props.text
         
     return StreamingResponse(
         predict_stream(text),
