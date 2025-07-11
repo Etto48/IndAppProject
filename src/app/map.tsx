@@ -2,7 +2,7 @@
 import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
-import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from "react-leaflet";
+import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents, ZoomControl } from "react-leaflet";
 
 
 type MapViewProps = {
@@ -178,6 +178,7 @@ function MapContents({ currentLocation, markers, focusOn, setFocusOn, centerMap,
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
+            <ZoomControl position="bottomleft"/>
             {currentLocation &&
                 <Marker position={currentLocation} icon={currentLocationIcon}>
                     <Popup>
@@ -203,7 +204,7 @@ export default function Map({currentLocation, markers, focusOn, setFocusOn}: Map
     const mapCenter: [number, number] = currentLocation ? currentLocation : [43.7230, 10.3966]; // Default center if no location is provided
     return (
         <>
-        <MapContainer center={mapCenter} zoom={15} className="map">
+        <MapContainer center={mapCenter} zoom={15} className="map" zoomControl={false}>
             <MapContents 
                 currentLocation={currentLocation}
                 markers={markers}

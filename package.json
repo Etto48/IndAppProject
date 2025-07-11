@@ -17,6 +17,7 @@
     "next": "15.3.5",
     "ollama": "^0.5.16",
     "openai": "^5.9.0",
+    "pg": "^8.16.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-geolocated": "^4.3.0",

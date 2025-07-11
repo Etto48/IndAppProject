@@ -84,7 +84,7 @@ button:active {
    - 768px: mobile
    - 576px: small mobile
 */
-@media screen and (max-width: 576px) {
+@media screen and (max-width: 768px) {
   .container {
     flex-direction: column;
   }
@@ -122,6 +122,7 @@ button:active {
   visibility: hidden;
   opacity: 0;
   transition: visibility 0s, opacity 0.2s ease-in-out, background-color 0.1s ease-in-out;
+  background-color: var(--background);
 }
 
 .reset-view-button.active {
@@ -130,9 +131,7 @@ button:active {
 }
 
 .ai-description-text {
-  margin-bottom: 10px;
   text-align: justify;
-  margin: 0 10px 10px 10px;
   transition: opacity 0.2s ease-in-out;
 }
 
@@ -236,17 +235,19 @@ button:active {
 .unmute-button {
   position: fixed;
   z-index: 1000;
-  top: 20px;
+  bottom: 20px;
   right: calc(100%/3 + 50px);
   width: 60px;
   height: 60px;
   border-radius: 50%;
+  background-color: var(--background);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-@media screen and (max-width: 576px) {
+@media screen and (max-width: 768px) {
   .unmute-button {
     right: 20px;
     top: calc(100%/3*2 - 110px);
@@ -263,4 +264,59 @@ button:active {
   .unmute-button img {
     filter: invert(1);
   }
+}
+
+.leaflet-control-attribution {
+  visibility: hidden; /* remove this if police knocks at your door */
+}
+
+@media (prefers-color-scheme: dark) {
+  .leaflet-control-zoom-in,
+  .leaflet-control-zoom-out {
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+  }
+
+  .leaflet-layer {
+    filter: invert(100%) hue-rotate(180deg) brightness(200%) contrast(90%);
+  }
+}
+
+.ai-description-container {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 600px;
+  max-width: calc(100%/3*2 - 66px);
+  border-radius: 15px;
+  z-index: 1000;
+  background-color: var(--background);
+  padding: 20px;
+  box-sizing: border-box;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.1s ease-in-out;
+  color: var(--foreground-important);
+}
+
+@media screen and (max-width: 768px) {
+  .ai-description-container {
+    position: unset;
+    max-width: unset;
+    width: 100%;
+    margin-bottom: 10px;
+    background-color: var(--component-background);
+  }
+}
+
+.ai-description-container:hover {
+  background-color: var(--component-background-hover);
+}
+
+@media (hover: none) {
+  .ai-description-container:hover {
+    background-color: var(--component-background);
+  }
+}
+
+.ai-description-container:active {
+  background-color: var(--component-background-active);
 }

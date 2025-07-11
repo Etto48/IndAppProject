@@ -45,6 +45,29 @@ services:
     profiles:
       - dev
       - backend
+  premium_prod:
+    build:
+      context: premium
+      dockerfile: Dockerfile
+    container_name: premium
+    expose:
+      - "5432:5432"
+    profiles:
+      - prod
+    volumes:
+      - ./premium/premium_data:/var/lib/postgresql/data
+  premium_dev:
+    build:
+      context: premium
+      dockerfile: Dockerfile
+    container_name: premium
+    ports:
+      - "5432:5432"
+    profiles:
+      - dev
+      - backend
+    volumes:
+      - ./premium/premium_data:/var/lib/postgresql/data
   travelmate_prod:
     build:
       context: ../
@@ -59,6 +82,7 @@ services:
     depends_on:
       - ollama_prod
       - piper_prod
+      - premium_prod
     profiles:
       - prod
   travelmate_dev:
@@ -75,6 +99,7 @@ services:
     depends_on:
       - ollama_dev
       - piper_dev
+      - premium_dev
     volumes:
       - ../:/app
     profiles:
