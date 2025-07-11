@@ -4,6 +4,8 @@ services:
       context: ollama
       dockerfile: Dockerfile
     container_name: ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=-1
     expose:
       - "11434:11434"
     profiles:
@@ -13,6 +15,8 @@ services:
       context: ollama
       dockerfile: Dockerfile
     container_name: ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=-1
     ports:
       - "11434:11434"
     profiles:
