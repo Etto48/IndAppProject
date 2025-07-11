@@ -71,24 +71,28 @@ export default function Home() {
             </div>
             <div className="marker-list-container">
                 <button className="unmute-button"  onClick={() => setMuted(!muted)}>
-                    <img src={muted ? "muted.svg" : "unmuted.svg"}
-                        alt={muted ? "Unmute" : "Mute"}
-                    />
+                    <div className="unmute-button-wrapper">
+                        <img src={muted ? "muted.svg" : "unmuted.svg"}
+                            alt={muted ? "Unmute" : "Mute"}
+                        />
+                    </div>
                 </button>
                 <div className="marker-list">
                     <div className="ai-description-container" onClick={() => replayTTS(aiDescription, aiDescriptionLoading)}>
-                        <h2>Overview</h2>
-                        <div className="ai-description">
-                            <p className={"ai-description-text " + (aiDescriptionLoading ? "loading": "")}>
-                            {aiDescription ? aiDescription : (
-                                aiDescriptionLoading ?
-                                    "Loading AI description..." :
-                                    "No AI description available."
-                            )}
-                            </p>
+                        <div className="ai-description-container-wrapper">        
+                            <h2>Overview</h2>
+                            <div className="ai-description">
+                                <p className={"ai-description-text " + (aiDescriptionLoading ? "loading": "")}>
+                                {aiDescription ? aiDescription : (
+                                    aiDescriptionLoading ?
+                                        "Loading AI description..." :
+                                        "No AI description available."
+                                )}
+                                </p>
+                            </div>
                         </div>
                     </div>
-                    <h2>Points of interest</h2>
+                    <h2 className="poi-title">Points of interest</h2>
                     {markers.map((marker, index) => (
                         <LocationButton 
                             currentLocation={currentLocation} 

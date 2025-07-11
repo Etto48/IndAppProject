@@ -1,8 +1,9 @@
 :root {
-  --background: #d0d0d0;
-  --component-background: #c0c0c0;
-  --component-background-hover: #b0b0b0;
-  --component-background-active: #a0a0a0;
+  --background: #d8d8d8;
+  --component-background: #c8c8c8;
+  --component-background-hover: #b8b8b8;
+  --component-background-active: #a8a8a8;
+  --contrast-border: #0004;
   --foreground: #181818;
   --foreground-important: #000000;
 }
@@ -13,6 +14,7 @@
     --component-background: #282828;
     --component-background-hover: #383838;
     --component-background-active: #484848;
+    --contrast-border: #fff4;
     --foreground: #d0d0d0;
     --foreground-important: #ffffff;
   }
@@ -112,7 +114,6 @@ button:active {
   margin-top: -60px;
   width: fit-content;
   z-index: 1000;
-  padding: 10px 40px;
   box-sizing: border-box;
 
   border: none;
@@ -122,7 +123,35 @@ button:active {
   visibility: hidden;
   opacity: 0;
   transition: visibility 0s, opacity 0.2s ease-in-out, background-color 0.1s ease-in-out;
+  background-color: var(--contrast-border);
+  border: 2px solid transparent;
+}
+
+.reset-view-button:hover,
+.reset-view-button:active {
+  background-color: var(--contrast-border);
+}
+
+.reset-view-button-wrapper {
+  width: 100%;
+  height: 100%;
+  border-radius: 40px;
+  padding: 10px 40px;
   background-color: var(--background);
+  transition: background-color 0.1s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (hover: hover) {
+  .reset-view-button:hover .reset-view-button-wrapper {
+    background-color: var(--component-background-hover);
+  }
+}
+
+.reset-view-button:active .reset-view-button-wrapper {
+  background-color: var(--component-background-active);
 }
 
 .reset-view-button.active {
@@ -159,6 +188,10 @@ button:active {
 
 .marker-list-container h2 {
   margin-bottom: 10px;
+}
+
+.poi-title {
+  margin-left: 20px;
 }
 
 .location-button {
@@ -240,11 +273,35 @@ button:active {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background-color: var(--background);
+  background-color: var(--contrast-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  border: 2px solid transparent;
+}
+
+.unmute-button:hover,
+.unmute-button:active {
+  background-color: var(--contrast-border);
+}
+
+.unmute-button-wrapper {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--background);
+  transition: background-color 0.1s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.unmute-button:hover .unmute-button-wrapper {
+  background-color: var(--component-background-hover);
+}
+
+.unmute-button:active .unmute-button-wrapper {
+  background-color: var(--component-background-active);
 }
 
 @media screen and (max-width: 768px) {
@@ -270,6 +327,11 @@ button:active {
   visibility: hidden; /* remove this if police knocks at your door */
 }
 
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  filter: brightness(84.75%);
+}
+
 @media (prefers-color-scheme: dark) {
   .leaflet-control-zoom-in,
   .leaflet-control-zoom-out {
@@ -281,20 +343,32 @@ button:active {
   }
 }
 
+.leaflet-control-zoom.leaflet-bar.leaflet-control {
+  border: 2px solid var(--contrast-border);
+}
+
 .ai-description-container {
   position: fixed;
   top: 20px;
   left: 20px;
   width: 600px;
   max-width: calc(100%/3*2 - 66px);
-  border-radius: 15px;
+  border-radius: 17px;
   z-index: 1000;
-  background-color: var(--background);
-  padding: 20px;
   box-sizing: border-box;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   transition: background-color 0.1s ease-in-out;
   color: var(--foreground-important);
+  background-color: var(--contrast-border);
+  border: 2px solid transparent;
+}
+
+.ai-description-container-wrapper {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  border-radius: 15px;
+  background-color: var(--background);
+  transition: background-color 0.1s ease-in-out;
 }
 
 @media screen and (max-width: 768px) {
@@ -303,20 +377,17 @@ button:active {
     max-width: unset;
     width: 100%;
     margin-bottom: 10px;
-    background-color: var(--component-background);
   }
 }
 
-.ai-description-container:hover {
-  background-color: var(--component-background-hover);
-}
 
-@media (hover: none) {
-  .ai-description-container:hover {
-    background-color: var(--component-background);
+
+@media (hover: hover) {
+  .ai-description-container:hover .ai-description-container-wrapper {
+    background-color: var(--component-background-hover);
   }
 }
 
-.ai-description-container:active {
+.ai-description-container:active .ai-description-container-wrapper {
   background-color: var(--component-background-active);
 }

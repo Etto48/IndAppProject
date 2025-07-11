@@ -220,7 +220,7 @@ export default function Map({currentLocation, markers, focusOn, setFocusOn}: Map
             setCenterMap(!centerMap);
             setFocusOn(null);
             setMapMoved(false);
-        }}>Reset map</button>
+        }}><div className="reset-view-button-wrapper">Reset map</div></button>
         </>
     );
 }
