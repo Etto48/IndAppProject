@@ -1,13 +1,24 @@
 services:
-  ollama:
+  ollama_prod:
     build:
       context: ollama
       dockerfile: Dockerfile
     container_name: ollama
     expose:
       - "11434:11434"
-
-  piper:
+    profiles:
+      - prod
+  ollama_dev:
+    build:
+      context: ollama
+      dockerfile: Dockerfile
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    profiles:
+      - dev
+      - backend
+  piper_prod:
     build:
       context: piper
       dockerfile: Dockerfile
@@ -16,11 +27,24 @@ services:
     container_name: piper
     expose:
       - "5000:5000"
-      
-  travelmate:
+    profiles:
+      - prod
+  piper_dev:
+    build:
+      context: piper
+      dockerfile: Dockerfile
+    environment:
+      - PIPER_VOICE=en_US-hfc_female-medium
+    container_name: piper
+    ports:
+      - "5000:5000"
+    profiles:
+      - dev
+      - backend
+  travelmate_prod:
     build:
       context: ../
-      dockerfile: docker/travelmate/Dockerfile
+      dockerfile: docker/travelmate/Dockerfile.prod
     container_name: travelmate
     environment:
       - APP_MODE=prod
@@ -29,18 +53,26 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - ollama
-      - piper
-    develop:
-      watch:
-        - path: ../
-          target: /app
-          action: sync
-          ignore:
-            - node_modules/
-            - .next/
-            - .venv/
-            - certificates/
-
-    
+      - ollama_prod
+      - piper_prod
+    profiles:
+      - prod
+  travelmate_dev:
+    build:
+      context: ../
+      dockerfile: docker/travelmate/Dockerfile.dev
+    container_name: travelmate
+    environment:
+      - APP_MODE=dev
+      - OLLAMA_URL=http://ollama:11434
+      - PIPER_URL=http://piper:5000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - ollama_dev
+      - piper_dev
+    volumes:
+      - ../:/app
+    profiles:
+      - dev
     

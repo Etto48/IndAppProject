@@ -1,7 +1,0 @@
-services:      
-  travelmate:
-    environment:
-      - RUN_MODE=dev
-
-    
-    
