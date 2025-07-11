@@ -74,9 +74,6 @@ function processQueue() {
 
 export function getMutedState(): boolean {
   let ctx = initAudio();
-  if (ctx.state === 'suspended') {
-    ctx.resume();
-  }
   return ctx.state === 'suspended' || ctx.state === 'closed';
 }
 
