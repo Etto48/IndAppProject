@@ -1,6 +1,7 @@
 let audioCtx: AudioContext | null = null;
 let isPlaying = false;
 const audioQueue: Float32Array[] = [];
+let keepAliveInterval: NodeJS.Timeout | null = null;
 
 export function initAudio() {
   if (!audioCtx || audioCtx.state === 'closed') {
@@ -15,7 +16,10 @@ export function initAudio() {
 let partialChunk = new Uint8Array(0);
 
 export function playPCMChunk(chunk: Uint8Array) {
-  const ctx = initAudio();
+  const ctx = audioCtx;
+  if (!ctx) {
+    return;
+  }
 
   const combined = new Uint8Array(partialChunk.length + chunk.length);
   combined.set(partialChunk, 0);
@@ -50,8 +54,8 @@ export function playPCMChunk(chunk: Uint8Array) {
 
 
 function processQueue() {
-  const ctx = initAudio();
-  if (audioQueue.length === 0) {
+  const ctx = audioCtx;
+  if (!ctx || audioQueue.length === 0) {
     isPlaying = false;
     return;
   }
@@ -66,4 +70,51 @@ function processQueue() {
   source.start();
 
   source.onended = processQueue;
+}
+
+export function getMutedState(): boolean {
+  let ctx = initAudio();
+  if (ctx.state === 'suspended') {
+    ctx.resume();
+  }
+  return ctx.state === 'suspended' || ctx.state === 'closed';
+}
+
+export function enableAudio() {
+  let ctx = initAudio();
+  if (ctx.state === 'suspended') {
+    ctx.resume();
+  }
+  const silence = ctx.createBufferSource();
+  silence.buffer = ctx.createBuffer(1, 1, ctx.sampleRate);
+  silence.connect(ctx.destination);
+  silence.start();
+
+  if (keepAliveInterval) {
+    clearInterval(keepAliveInterval);
+  }
+  keepAliveInterval = setInterval(() => {
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+    const silence = ctx.createBufferSource();
+    silence.buffer = ctx.createBuffer(1, 1, ctx.sampleRate);
+    silence.connect(ctx.destination);
+    silence.start();
+  }
+  , 10000);
+}
+
+export function disableAudio() {
+  if (keepAliveInterval) {
+    clearInterval(keepAliveInterval);
+    keepAliveInterval = null;
+  }
+  if (audioCtx) {
+    audioCtx.close();
+    audioCtx = null;
+  }
+  isPlaying = false;
+  audioQueue.length = 0;
+  partialChunk = new Uint8Array(0);
 }

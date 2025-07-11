@@ -5,6 +5,7 @@ import { useGeolocated } from "react-geolocated";
 import LocationButton from "./location_button";
 import { locationDistance, locationMarkerPropsToRelativeMarkerProps } from "./utils";
 import { tts } from "./tts";
+import { disableAudio, enableAudio, getMutedState } from "./audio";
 const Map = dynamic(() => import("./map"), {
     ssr: false,
 });
@@ -105,7 +106,19 @@ export default function Home() {
     const [markers, setMarkers] = useState<Array<LocationMarkerProps>>([
         
     ]);
-    const [muted, setMuted] = useState<boolean>(true);
+    const [muted, setMuted] = useState<boolean>(false);
+    useEffect(() => {
+        const initialMuted = getMutedState();
+        setMuted(initialMuted);
+    }, []);
+    useEffect(() => {
+        if (muted) {
+            disableAudio();
+        } else {
+            enableAudio();
+        }
+    }, [muted]);
+
     const [aiDescription, setAiDescription] = useState<string>('');
     const [aiDescriptionLoading, setAiDescriptionLoading] = useState<boolean>(false);
     const [focusOn, setFocusOn] = useState<LocationMarkerProps | null>(null);
