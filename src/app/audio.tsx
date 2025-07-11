@@ -7,7 +7,7 @@ export function initAudio() {
     audioCtx = new AudioContext({ sampleRate: 22050 });
   }
   if (audioCtx.state === 'suspended') {
-    audioCtx.resume(); 
+    audioCtx.resume();
   }
   return audioCtx;
 }

@@ -19,9 +19,9 @@ type MapContentsProps = {
     setMapMoved: (moved: boolean) => void;
 } & MapViewProps;
 
-type DetectMapEventsProps = { 
-    setMapMoved: (moved: boolean) => void, 
-    centerMap: boolean, 
+type DetectMapEventsProps = {
+    setMapMoved: (moved: boolean) => void,
+    centerMap: boolean,
     setCenterMap: (centerMap: boolean) => void,
     setFocusOn: (focusOn: LocationMarkerProps | null) => void
 };

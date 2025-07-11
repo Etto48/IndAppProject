@@ -7,8 +7,8 @@ type LocationDetails = {
     rating?: number,
 }
 
-type LocationMarkerProps = { 
-    name: string, 
+type LocationMarkerProps = {
+    name: string,
 } & LocationDetails;
 
 type LocationErrorProps = {

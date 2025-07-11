@@ -1,14 +1,15 @@
 import { formatDistance } from '@/app/utils';
-import { NextApiRequest, NextApiResponse } from 'next';
 import { NextRequest } from 'next/server';
-import { Ollama } from 'ollama/browser';
+import { OpenAI } from 'openai';
 
 export const runtime = 'edge';
 
-const targetUrl = process.env.OLLAMA_URL || 'http://localhost:11434/';
-const modelName = 'llama3.2:3b';
-const ollama = new Ollama({
-    host: targetUrl,
+const targetUrl = process.env.LLM_URL || 'http://localhost:11434/v1';
+const modelName = process.env.LLM_MODEL || 'llama3.2:3b';
+const apiKey = process.env.LLM_API_KEY || 'ollama';
+const llm = new OpenAI({
+    apiKey: apiKey,
+    baseURL: targetUrl,
 })
 
 
@@ -63,9 +64,14 @@ export default async function handler(req: NextRequest) {
         });
     }
     try {
-        const response = await ollama.generate({
+        const response = await llm.chat.completions.create({
             model: modelName,
-            prompt: createPrompt(poi),
+            messages: [
+                {
+                    role: "user",
+                    content: createPrompt(poi),
+                }
+            ],
             stream: true,
         });
         
@@ -73,7 +79,8 @@ export default async function handler(req: NextRequest) {
         const stream = new ReadableStream({
             async start(controller) {
                 for await (const chunk of response) {
-                    controller.enqueue(textEncoder.encode(chunk.response));
+                    const content = chunk.choices[0]?.delta?.content || '';
+                    controller.enqueue(textEncoder.encode(content));
                 }
                 controller.close();
             }

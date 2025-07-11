@@ -84,7 +84,7 @@ function updateAiDescription(
                 chunk = chunk.split("</think>")[1];
                 thinking = false;
                 if (!chunk) {
-                    continue;    
+                    continue;
                 }
             }
             if (!thinking) {

@@ -19,7 +19,7 @@ function LocationIcon({ category, active }: { category: string, active?: boolean
 }
 
 type LocationButtonProps = {
-    currentLocation: [number, number] | null, 
+    currentLocation: [number, number] | null,
     marker: LocationMarkerProps,
     focusOn: LocationMarkerProps | null,
     setFocusOn: (focusOn: LocationMarkerProps | null) => void

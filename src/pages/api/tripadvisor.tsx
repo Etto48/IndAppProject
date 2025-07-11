@@ -89,8 +89,8 @@ export default async function handler(
                         error: location.error,
                     };
                 }
-                return { 
-                    name: data.data[index].name, 
+                return {
+                    name: data.data[index].name,
                     ...location,
                 };
             });
