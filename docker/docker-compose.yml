@@ -48,7 +48,7 @@ services:
     container_name: travelmate
     environment:
       - APP_MODE=prod
-      - OLLAMA_URL=http://ollama:11434
+      - LLM_URL=http://ollama:11434
       - PIPER_URL=http://piper:5000
     ports:
       - "3000:3000"
@@ -64,7 +64,7 @@ services:
     container_name: travelmate
     environment:
       - APP_MODE=dev
-      - OLLAMA_URL=http://ollama:11434
+      - LLM_URL=http://ollama:11434
       - PIPER_URL=http://piper:5000
     ports:
       - "3000:3000"

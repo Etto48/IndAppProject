@@ -4,12 +4,12 @@ import { OpenAI } from 'openai';
 
 export const runtime = 'edge';
 
-const targetUrl = process.env.LLM_URL || 'http://localhost:11434/v1';
+const targetUrl = process.env.LLM_URL || 'http://localhost:11434';
 const modelName = process.env.LLM_MODEL || 'llama3.2:3b';
 const apiKey = process.env.LLM_API_KEY || 'ollama';
 const llm = new OpenAI({
     apiKey: apiKey,
-    baseURL: targetUrl,
+    baseURL: `${targetUrl}/v1`,
 })
 
 
