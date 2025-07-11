@@ -21,8 +21,6 @@ export async function tts(text: string) {
         if (done) {
             break;
         }
-        console.log('Received audio chunk',);
-        console.log(value);
         playPCMChunk(value);
     }
 }
