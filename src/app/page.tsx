@@ -6,6 +6,7 @@ import LocationButton from "./location_button";
 import { locationDistance } from "./utils";
 import { disableAudio, enableAudio, getMutedState } from "./audio";
 import { updateMarkers } from "./ai_overview";
+import { replayTTS } from "./tts";
 const Map = dynamic(() => import("./map"), {
     ssr: false,
 });
@@ -14,7 +15,7 @@ export default function Home() {
     const [markers, setMarkers] = useState<Array<LocationMarkerProps>>([
         
     ]);
-    const [muted, setMuted] = useState<boolean>(false);
+    const [muted, setMuted] = useState<boolean>(true);
     useEffect(() => {
         const initialMuted = getMutedState();
         setMuted(initialMuted);
@@ -64,7 +65,7 @@ export default function Home() {
                     />
                 </button>
                 <div className="marker-list">
-                    <div className="ai-description-container">
+                    <div className="ai-description-container" onClick={() => replayTTS(aiDescription, aiDescriptionLoading)}>
                         <h2>Overview</h2>
                         <div className="ai-description">
                             <p className={"ai-description-text " + (aiDescriptionLoading ? "loading": "")}>
