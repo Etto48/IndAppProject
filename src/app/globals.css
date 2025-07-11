@@ -296,8 +296,10 @@ button:active {
   justify-content: center;
 }
 
-.unmute-button:hover .unmute-button-wrapper {
-  background-color: var(--component-background-hover);
+@media (hover: hover) {
+  .unmute-button:hover .unmute-button-wrapper {
+    background-color: var(--component-background-hover);
+  }
 }
 
 .unmute-button:active .unmute-button-wrapper {
