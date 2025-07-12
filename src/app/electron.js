@@ -1,4 +1,5 @@
 const { app, BrowserWindow, session } = require('electron');
+require('dotenv').config();
 
 let mainWindow;
 
@@ -20,7 +21,7 @@ function createWindow() {
         callback(true); // Automatically grant permission
     });
 
-    mainWindow.loadURL('https://localhost:3000');
+    mainWindow.loadURL('https://127.0.0.1:3000');
 
     mainWindow.on('closed', () => {
         mainWindow = null;

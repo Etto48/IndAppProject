@@ -10,7 +10,7 @@ export async function getIPLocation(): Promise<[number, number] | null> {
             if (data.latitude && data.longitude) {
                 return [data.latitude, data.longitude] as [number, number];
             } else {
-                throw new Error('Invalid location data');
+                throw new Error('Invalid location data: ' + JSON.stringify(data));
             }
         })
         .catch(error => {

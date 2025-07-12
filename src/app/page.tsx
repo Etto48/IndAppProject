@@ -28,6 +28,18 @@ export default function Home() {
             enableAudio();
         }
     }, [muted]);
+    const [ipLocation, setIpLocation] = useState<[number, number] | null>(null);
+    const [requestedIpLocation, setRequestedIpLocation] = useState<boolean>(false);
+    useEffect(() => {
+        if (!requestedIpLocation) {
+            setRequestedIpLocation(true);
+            getIPLocation().then((info) => {
+                setIpLocation(info);
+            }).catch((error) => {
+                console.error("Error getting IP location: ", error);
+            });
+        }
+    })
 
     const [aiDescription, setAiDescription] = useState<string>('');
     const [aiDescriptionLoading, setAiDescriptionLoading] = useState<boolean>(false);
@@ -38,10 +50,13 @@ export default function Home() {
                     enableHighAccuracy: true,
                 },
                 watchPosition: true,
-                userDecisionTimeout: 5000,
+                userDecisionTimeout: 50000,
+                onError: (error) => {
+                    console.error("Geolocation error: ", error ? error.message : "Timeout");
+                }
             });
     const [oldLocation, setOldLocation] = useState<[number, number] | null>(null);
-    let currentLocation: [number, number] | null = coords ? [coords.latitude, coords.longitude] as [number, number] : null;
+    let currentLocation: [number, number] | null = coords ? [coords.latitude, coords.longitude] as [number, number] : ipLocation;
     let accuracy = coords ? coords.accuracy : 0;
     const locationThreshold = 500; // metres
     useEffect(() => {
