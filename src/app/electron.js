@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, session } = require('electron');
 
 let mainWindow;
 
@@ -8,7 +8,16 @@ function createWindow() {
         height: 600,
         webPreferences: {
             nodeIntegration: true,
+            contextIsolation: false,
         },
+    });
+
+    session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
+        if (permission === 'geolocation') {
+            callback(true); // Grant geolocation permission
+        } else {
+            callback(false);
+        }
     });
 
     mainWindow.loadURL('https://localhost:3000');
@@ -18,14 +27,14 @@ function createWindow() {
     });
 }
 
+app.whenReady().then(createWindow);
+
 app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
     // On certificate error we disable default behaviour (stop loading the page)
     // and we then say "it is all fine - true" to the callback
     event.preventDefault();
     callback(true);
 });
-
-app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
