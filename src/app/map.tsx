@@ -172,6 +172,8 @@ function selectIcon(category: string, active: boolean): Icon {
 } 
 
 function MapContents({ currentLocation, markers, focusOn, setFocusOn, centerMap, setCenterMap, mapMoved, setMapMoved }: MapContentsProps) {
+    let map = useMap();
+    if (!map.getPane) return null;
     return (
         <>
         <TileLayer
