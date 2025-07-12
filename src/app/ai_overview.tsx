@@ -1,4 +1,4 @@
-import { tts } from "./tts";
+import { replayTTS, tts } from "./tts";
 import { locationMarkerPropsToRelativeMarkerProps } from "./utils";
 
 export function updateMarkers(
@@ -101,4 +101,29 @@ function updateAiDescription(
         setAiDescriptionLoading(false);
         setAiDescription('Error generating AI description.');
     });
+}
+
+export function AiOverview({
+    aiDescription,
+    aiDescriptionLoading,
+}: {
+    aiDescription: string,
+    aiDescriptionLoading: boolean,
+}) {
+    return (
+        <div className="ai-description-container" onClick={() => replayTTS(aiDescription, aiDescriptionLoading)}>
+            <div className="ai-description-container-wrapper">        
+                <h2>Overview</h2>
+                <div className="ai-description">
+                    <p className={"ai-description-text " + (aiDescriptionLoading ? "loading": "")}>
+                    {aiDescription ? aiDescription : (
+                        aiDescriptionLoading ?
+                            "Loading AI description..." :
+                            "No AI description available."
+                    )}
+                    </p>
+                </div>
+            </div>
+        </div>
+    )
 }

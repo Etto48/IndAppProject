@@ -5,7 +5,7 @@ import { useGeolocated } from "react-geolocated";
 import LocationButton from "./location_button";
 import { locationDistance } from "./utils";
 import { disableAudio, enableAudio, getMutedState } from "./audio";
-import { updateMarkers } from "./ai_overview";
+import { AiOverview, updateMarkers } from "./ai_overview";
 import { replayTTS } from "./tts";
 import { getIPLocation } from "./geolocation";
 const Map = dynamic(() => import("./map"), {
@@ -78,20 +78,7 @@ export default function Home() {
                     </div>
                 </button>
                 <div className="marker-list">
-                    <div className="ai-description-container" onClick={() => replayTTS(aiDescription, aiDescriptionLoading)}>
-                        <div className="ai-description-container-wrapper">        
-                            <h2>Overview</h2>
-                            <div className="ai-description">
-                                <p className={"ai-description-text " + (aiDescriptionLoading ? "loading": "")}>
-                                {aiDescription ? aiDescription : (
-                                    aiDescriptionLoading ?
-                                        "Loading AI description..." :
-                                        "No AI description available."
-                                )}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                    <AiOverview aiDescription={aiDescription} aiDescriptionLoading={aiDescriptionLoading} />
                     <h2 className="poi-title">Points of interest</h2>
                     {markers.map((marker, index) => (
                         <LocationButton 

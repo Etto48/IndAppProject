@@ -86,11 +86,10 @@ button:active {
    - 768px: mobile
    - 576px: small mobile
 */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 576px) {
   .container {
     flex-direction: column;
   }
-
 }
 
 .map-container {
@@ -306,7 +305,7 @@ button:active {
   background-color: var(--component-background-active);
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 576px) {
   .unmute-button {
     right: 20px;
     top: calc(100%/3*2 - 110px);
@@ -351,38 +350,29 @@ button:active {
 
 .ai-description-container {
   position: fixed;
-  top: 20px;
-  left: 20px;
-  width: 600px;
-  max-width: calc(100%/3*2 - 66px);
-  border-radius: 17px;
+  top: 10px;
+  left: 10px;
   z-index: 1000;
-  box-sizing: border-box;
-  transition: background-color 0.1s ease-in-out;
-  color: var(--foreground-important);
+  width: 600px;
   background-color: var(--contrast-border);
+  border-radius: 17px;
   border: 2px solid transparent;
 }
 
 .ai-description-container-wrapper {
-  width: 100%;
-  height: 100%;
   padding: 20px;
-  border-radius: 15px;
   background-color: var(--background);
+  border-radius: 15px;
   transition: background-color 0.1s ease-in-out;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 992px) {
   .ai-description-container {
     position: unset;
-    max-width: unset;
-    width: 100%;
+    width: fit-content;
     margin-bottom: 10px;
   }
 }
-
-
 
 @media (hover: hover) {
   .ai-description-container:hover .ai-description-container-wrapper {
