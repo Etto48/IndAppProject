@@ -2,14 +2,15 @@
 import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
-import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents, ZoomControl } from "react-leaflet";
+import { Circle, MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents, ZoomControl } from "react-leaflet";
 
 
 type MapViewProps = {
     currentLocation: [number, number] | null;
     focusOn: LocationMarkerProps | null;
     setFocusOn: (focusOn: LocationMarkerProps | null) => void;
-    markers?: Array<LocationMarkerProps>;
+    accuracy: number;
+    markers: Array<LocationMarkerProps>;
 };
 
 type MapContentsProps = {
@@ -171,7 +172,7 @@ function selectIcon(category: string, active: boolean): Icon {
     }
 } 
 
-function MapContents({ currentLocation, markers, focusOn, setFocusOn, centerMap, setCenterMap, mapMoved, setMapMoved }: MapContentsProps) {
+function MapContents({ currentLocation, markers, focusOn, setFocusOn, accuracy, centerMap, setCenterMap, mapMoved, setMapMoved }: MapContentsProps) {
     let map = useMap();
     if (!map.getPane) return null;
     return (
@@ -187,6 +188,11 @@ function MapContents({ currentLocation, markers, focusOn, setFocusOn, centerMap,
                         You are here!
                     </Popup>
                 </Marker>}
+            {accuracy > 0 && currentLocation && 
+                <Circle center={currentLocation} radius={accuracy} pathOptions={
+                    { color: 'var(--foreground-important)', fillColor: 'var(--foreground-important)', fillOpacity: 0.1, weight: 1 }
+                } />
+            }
             {markers && markers.map((marker, index) => (
                 <Marker key={index} position={marker.position} icon={selectIcon(marker.category, marker === focusOn)} zIndexOffset={marker === focusOn ? 1000 : 0}>
                     <Popup>
@@ -200,18 +206,27 @@ function MapContents({ currentLocation, markers, focusOn, setFocusOn, centerMap,
     )
 }
 
-export default function Map({currentLocation, markers, focusOn, setFocusOn}: MapViewProps) {
+export default function Map({currentLocation, markers, focusOn, setFocusOn, accuracy}: MapViewProps) {
     const [centerMap, setCenterMap] = useState(false);
     const [mapMoved, setMapMoved] = useState(false);
     const mapCenter: [number, number] = currentLocation ? currentLocation : [43.7230, 10.3966]; // Default center if no location is provided
     return (
         <>
-        <MapContainer center={mapCenter} zoom={15} className="map" zoomControl={false}>
+        <MapContainer 
+            center={mapCenter} 
+            zoom={15} 
+            className="map" 
+            zoomControl={false} 
+            minZoom={3} 
+            maxBounds={[[-90, -190], [90, 190]]} 
+            maxBoundsViscosity={.8}
+        >
             <MapContents 
                 currentLocation={currentLocation}
                 markers={markers}
                 focusOn={focusOn}
                 setFocusOn={setFocusOn}
+                accuracy={accuracy}
                 centerMap={centerMap}
                 setCenterMap={setCenterMap}
                 mapMoved={mapMoved}

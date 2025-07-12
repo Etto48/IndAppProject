@@ -32,7 +32,6 @@ export default function Home() {
     const [aiDescription, setAiDescription] = useState<string>('');
     const [aiDescriptionLoading, setAiDescriptionLoading] = useState<boolean>(false);
     const [focusOn, setFocusOn] = useState<LocationMarkerProps | null>(null);
-    const [ipLocation, setIPLocation] = useState<[number, number] | null>(null);
     const { coords, isGeolocationAvailable, isGeolocationEnabled } =
             useGeolocated({
                 positionOptions: {
@@ -40,18 +39,10 @@ export default function Home() {
                 },
                 watchPosition: true,
                 userDecisionTimeout: 5000,
-                onError: (error) => {
-                    if (ipLocation === null) {
-                        getIPLocation().then(location => {
-                            setIPLocation(location);
-                        }).catch(err => {
-                            console.error('Error fetching IP location:', err);
-                        });
-                    }
-                },
             });
     const [oldLocation, setOldLocation] = useState<[number, number] | null>(null);
-    let currentLocation: [number, number] | null = coords ? [coords.latitude, coords.longitude] as [number, number] : ipLocation;
+    let currentLocation: [number, number] | null = coords ? [coords.latitude, coords.longitude] as [number, number] : null;
+    let accuracy = coords ? coords.accuracy : 0;
     const locationThreshold = 500; // metres
     useEffect(() => {
         if (currentLocation !== null && (oldLocation === null || locationDistance(oldLocation, currentLocation) > locationThreshold)) {
@@ -67,6 +58,7 @@ export default function Home() {
                     focusOn={focusOn} 
                     setFocusOn={setFocusOn} 
                     markers={markers}
+                    accuracy={accuracy}
                 />
             </div>
             <div className="marker-list-container">

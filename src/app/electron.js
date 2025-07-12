@@ -2,6 +2,9 @@ const { app, BrowserWindow, session } = require('electron');
 
 let mainWindow;
 
+app.commandLine.appendSwitch('ignore-certificate-errors', 'true');
+app.commandLine.appendSwitch('disable-web-security', 'true');
+
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 800,
