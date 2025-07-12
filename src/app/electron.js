@@ -13,11 +13,8 @@ function createWindow() {
     });
 
     session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
-        if (permission === 'geolocation') {
-            callback(true); // Grant geolocation permission
-        } else {
-            callback(false);
-        }
+        console.log(`Permission requested: ${permission}`);
+        callback(true); // Automatically grant permission
     });
 
     mainWindow.loadURL('https://localhost:3000');
