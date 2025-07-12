@@ -214,7 +214,7 @@ export default function Map({currentLocation, markers, focusOn, setFocusOn, accu
         <>
         <MapContainer 
             center={mapCenter} 
-            zoom={15} 
+            zoom={14} 
             className="map" 
             zoomControl={false} 
             minZoom={3} 
