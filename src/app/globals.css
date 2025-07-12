@@ -233,7 +233,8 @@ button:active {
 
 .location-button.active .location-button-description {
   max-height: 100px;
-  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .location-button .location-button-name {
