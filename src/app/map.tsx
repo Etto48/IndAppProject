@@ -3,6 +3,7 @@ import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import { Circle, MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents, ZoomControl } from "react-leaflet";
+import "leaflet-edgebuffer";
 
 
 type MapViewProps = {
@@ -180,6 +181,7 @@ function MapContents({ currentLocation, markers, focusOn, setFocusOn, accuracy, 
         <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                edgeBufferTiles={1}
             />
             <ZoomControl position="bottomleft"/>
             {currentLocation &&
@@ -220,6 +222,8 @@ export default function Map({currentLocation, markers, focusOn, setFocusOn, accu
             minZoom={3} 
             maxBounds={[[-90, -190], [90, 190]]} 
             maxBoundsViscosity={.8}
+            wheelPxPerZoomLevel={100}
+            zoomSnap={0}
         >
             <MapContents 
                 currentLocation={currentLocation}
