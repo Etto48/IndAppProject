@@ -1,5 +1,7 @@
 const { app, BrowserWindow, session } = require('electron');
-require('dotenv').config();
+require('dotenv').config({
+    path: require('path').join(__dirname, '../.env.electron')
+});
 
 let mainWindow;
 
