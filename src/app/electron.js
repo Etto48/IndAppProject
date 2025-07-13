@@ -1,5 +1,6 @@
 const { app, BrowserWindow, session } = require('electron');
 require('dotenv').config({
+    // The GOOGLE_API_KEY is used only for the Electron app and is not needed in the web app or Android app.
     path: require('path').join(__dirname, '../.env.electron')
 });
 
