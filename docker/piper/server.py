@@ -8,6 +8,7 @@ import os
 import io
 
 app = f.FastAPI()
+PORT = int(os.getenv('PORT', 5000))
 
 voice_name = os.getenv("PIPER_VOICE")
 assert voice_name is not None, "PIPER_VOICE environment variable must be set"
@@ -45,4 +46,4 @@ def predict(request: f.Request, text: str):
         })
 
 if __name__ == "__main__":
-    uvicorn.run(app, port=5000, host="0.0.0.0")
+    uvicorn.run(app, port=PORT, host="0.0.0.0")
