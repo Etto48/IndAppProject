@@ -185,7 +185,7 @@ function MapContents({ currentLocation, markers, focusOn, setFocusOn, accuracy, 
             />
             <ZoomControl position="bottomleft"/>
             {currentLocation &&
-                <Marker position={currentLocation} icon={currentLocationIcon} zIndexOffset={2000}>
+                <Marker position={currentLocation} icon={currentLocationIcon} zIndexOffset={500}>
                     <Popup>
                         You are here!
                     </Popup>
