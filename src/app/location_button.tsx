@@ -27,7 +27,7 @@ type LocationButtonProps = {
 
 export default function LocationButton({currentLocation, marker, focusOn, setFocusOn}: LocationButtonProps) {
     return (
-        <button className={"location-button " + (focusOn === marker? "active" : "")} onClick={() => setFocusOn(marker)}>
+        <button className={"location-button " + (focusOn === marker? "active " : "") + (marker.priority > 0 ? "premium" : "")} onClick={() => setFocusOn(marker)}>
             <LocationIcon category={marker.category} active={focusOn === marker} />
             <div className="location-button-info">
                 <strong className="location-button-name">{marker.name}</strong>

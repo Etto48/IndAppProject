@@ -185,7 +185,7 @@ function MapContents({ currentLocation, markers, focusOn, setFocusOn, accuracy, 
             />
             <ZoomControl position="bottomleft"/>
             {currentLocation &&
-                <Marker position={currentLocation} icon={currentLocationIcon}>
+                <Marker position={currentLocation} icon={currentLocationIcon} zIndexOffset={2000}>
                     <Popup>
                         You are here!
                     </Popup>
@@ -196,7 +196,12 @@ function MapContents({ currentLocation, markers, focusOn, setFocusOn, accuracy, 
                 } />
             }
             {markers && markers.map((marker, index) => (
-                <Marker key={index} position={marker.position} icon={selectIcon(marker.category, marker === focusOn)} zIndexOffset={marker === focusOn ? 1000 : 0}>
+                <Marker 
+                    key={index} 
+                    position={marker.position} 
+                    icon={selectIcon(marker.category, marker === focusOn)} 
+                    zIndexOffset={marker === focusOn ? 1000 : 0}
+                    >
                     <Popup>
                         {marker.name}
                     </Popup>

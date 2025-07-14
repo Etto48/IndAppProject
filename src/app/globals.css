@@ -6,6 +6,7 @@
   --contrast-border: #0004;
   --foreground: #181818;
   --foreground-important: #000000;
+  --premium-color: #ffcc00; /* Color for premium locations */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,6 +18,7 @@
     --contrast-border: #fff4;
     --foreground: #d0d0d0;
     --foreground-important: #ffffff;
+    --premium-color: #ffcc00; /* Color for premium locations */
   }
 }
 
@@ -59,18 +61,20 @@ button {
   transition: background-color 0.1s ease-in-out;
 }
 
-button:hover {
-  background-color: var(--component-background-hover);
-}
-
-button:active {
-  background-color: var(--component-background-active);
+@media (hover: hover) {
+  button:hover {
+    background-color: var(--component-background-hover);
+  }
 }
 
 @media (hover: none) {
   button:hover {
     background-color: var(--component-background);
   }
+}
+
+button:active {
+  background-color: var(--component-background-active);
 }
 
 .container {
@@ -195,6 +199,7 @@ button:active {
 }
 
 .location-button {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -235,6 +240,19 @@ button:active {
   max-height: 100px;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+.location-button.premium {
+  border: 2px solid var(--premium-color);
+  margin-bottom: 20px;
+}
+
+.location-button.premium::after {
+  content: "Sponsored";
+  position: absolute;
+  bottom: -16px;
+  right: 10px;
+  font-size: 12px;
 }
 
 .location-button .location-button-name {

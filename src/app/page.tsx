@@ -30,16 +30,6 @@ export default function Home() {
     }, [muted]);
     const [ipLocation, setIpLocation] = useState<[number, number] | null>(null);
     const [requestedIpLocation, setRequestedIpLocation] = useState<boolean>(false);
-    useEffect(() => {
-        if (!requestedIpLocation) {
-            setRequestedIpLocation(true);
-            getIPLocation().then((info) => {
-                setIpLocation(info);
-            }).catch((error) => {
-                console.error("Error getting IP location: ", error);
-            });
-        }
-    })
 
     const [aiDescription, setAiDescription] = useState<string>('');
     const [aiDescriptionLoading, setAiDescriptionLoading] = useState<boolean>(false);
@@ -50,9 +40,17 @@ export default function Home() {
                     enableHighAccuracy: true,
                 },
                 watchPosition: true,
-                userDecisionTimeout: 50000,
+                userDecisionTimeout: 5000,
                 onError: (error) => {
                     console.error("Geolocation error: ", error ? error.message : "Timeout");
+                    if (!requestedIpLocation) {
+                        setRequestedIpLocation(true);
+                        getIPLocation().then((info) => {
+                            setIpLocation(info);
+                        }).catch((error) => {
+                            console.error("Error getting IP location: ", error);
+                        });
+                    }
                 }
             });
     const [oldLocation, setOldLocation] = useState<[number, number] | null>(null);

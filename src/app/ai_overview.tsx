@@ -16,6 +16,9 @@ export function updateMarkers(
         }).then(data => {
             const validMarkers = data.data
                 .filter((item: MaybeLocationMarkerProps) => "error" in item === false )
+                .sort((a: LocationMarkerProps, b: LocationMarkerProps) => {
+                    return a.priority - b.priority;
+                })
             setMarkers(validMarkers);
             
             updateAiDescription(setAiDescription, setAiDescriptionLoading, currentLocation, validMarkers);

@@ -7,6 +7,10 @@ type ResponseData = {
 
 let locationCache: Record<string, LocationDetails> = {};
 
+async function getPriority(location_id: string): Promise<number> {
+    return 0; // TODO: Get data from priority api
+}
+
 async function getLocationInfo(location_id: string, apiKey: string): Promise<LocationDetails> {
     if (locationCache[location_id]) {
         return locationCache[location_id];
@@ -27,6 +31,7 @@ async function getLocationInfo(location_id: string, apiKey: string): Promise<Loc
 
         const detailsData = await detailsResponse.json();
         let details = {
+            location_id: detailsData.location_id,
             position: [detailsData.latitude, detailsData.longitude] as [number, number],
             address: detailsData.address_obj.address_string,
             category: detailsData.category.name || 'unknown',
@@ -82,7 +87,7 @@ export default async function handler(
                     }
                 })
             );
-            data.data = mappedLocations.map((location, index): MaybeLocationMarkerProps => {
+            data.data = await Promise.all(mappedLocations.map(async (location, index): Promise<MaybeLocationMarkerProps> => {
                 if (location.error) {
                     return {
                         name: data.data[index].name,
@@ -91,9 +96,10 @@ export default async function handler(
                 }
                 return {
                     name: data.data[index].name,
+                    priority: await getPriority(location.location_id),
                     ...location,
                 };
-            });
+            }));
         }
         res.status(200).json(data);
     } catch (error) {

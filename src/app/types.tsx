@@ -1,5 +1,6 @@
 
 type LocationDetails = {
+    location_id: string,
     position: [number, number],
     address: string,
     category: string,
@@ -9,6 +10,7 @@ type LocationDetails = {
 
 type LocationMarkerProps = {
     name: string,
+    priority: number, // Priority is higher for premium locations
 } & LocationDetails;
 
 type LocationErrorProps = {
