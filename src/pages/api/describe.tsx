@@ -13,8 +13,8 @@ const llm = new OpenAI({
 })
 
 
-function createPrompt(poi: Array<RelativeMarkerProps>): string {
-    let prompt = "Describe the nearby area by pointing out groups of similar places and suggesting worthwhile activities. "+
+function createPrompt(poi: Array<RelativeMarkerProps>): [string, string] {
+    let system_prompt = "Describe the nearby area by pointing out groups of similar places and suggesting worthwhile activities. "+
         "Pay attention to the rating without pointing it out explicitly: "+
         "1 = terrible, 2 = poor, 3 = average, 4 = very good, 5 = excellent. "+
         "Don't mention duplicates and skip anything that seems too odd or irrelevant for a tourist. "+
@@ -27,20 +27,20 @@ function createPrompt(poi: Array<RelativeMarkerProps>): string {
         "distance: \"<distance>\", "+
         "rating: \"<rating from 1 to 5, if available>\", "+
         "description: \"<description of the location>\", "+
-        "address: \"<address string>\".\n"+
-        "Locations:\n";
+        "address: \"<address string>\".\n";
+        let user_prompt = "Locations:\n";
     for (let item of poi) {
         let sanitizedDescription = item.description || ''; // Ensure description is defined
         sanitizedDescription = sanitizedDescription.replace(/"/g, '\\"'); // Escape quotes in description
         sanitizedDescription = sanitizedDescription.replace(/\n/g, ' '); // Replace newlines with spaces
-        prompt += `- name: \"${item.name}\", `+
+        user_prompt += `- name: \"${item.name}\", `+
             `category: \"${item.category}\", `+
             `distance: \"${formatDistance(item.distance)}\", `+
             `rating: \"${item.rating !== undefined ? Math.round(item.rating) : 'N/A'}\", `+
             `description: \"${sanitizedDescription}\", `+
             `address: \"${item.address}"\n`;
     }
-    return prompt;
+    return [system_prompt, user_prompt];
 }
 
 export default async function handler(req: NextRequest) {
@@ -64,12 +64,17 @@ export default async function handler(req: NextRequest) {
         });
     }
     try {
+        const [system_prompt, user_prompt] = createPrompt(poi);
         const response = await llm.chat.completions.create({
             model: modelName,
             messages: [
                 {
+                    role: "system",
+                    content: system_prompt
+                },
+                {
                     role: "user",
-                    content: createPrompt(poi),
+                    content: user_prompt
                 }
             ],
             stream: true,
