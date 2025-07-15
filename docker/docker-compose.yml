@@ -79,6 +79,7 @@ services:
       - APP_MODE=prod
       - LLM_URL=http://ollama:11434
       - PIPER_URL=http://piper:5000
+      - PREMIUM_URL=http://premium:5432
     ports:
       - "3000:3000"
     depends_on:
@@ -96,6 +97,7 @@ services:
       - APP_MODE=dev
       - LLM_URL=http://ollama:11434
       - PIPER_URL=http://piper:5000
+      - PREMIUM_URL=http://premium:5432
     ports:
       - "3000:3000"
     depends_on:
