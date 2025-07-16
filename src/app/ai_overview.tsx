@@ -27,6 +27,8 @@ export function updateMarkers(
         });
 }
 
+let aiDescriptionAbortController: AbortController | null = null;
+
 function updateAiDescription(
     setAiDescription: (description: string) => void,
     setAiDescriptionLoading: (loading: boolean) => void,
@@ -39,7 +41,10 @@ function updateAiDescription(
     let query_data = markers.map(marker => {
         return locationMarkerPropsToRelativeMarkerProps(marker, currentLocation);
     })
+    aiDescriptionAbortController?.abort();
+    aiDescriptionAbortController = new AbortController();
     setAiDescriptionLoading(true);
+    setAiDescription('');
     fetch('/api/describe', {
         method: 'POST',
         headers: {
@@ -54,6 +59,7 @@ function updateAiDescription(
                 "poi": query_data,
             }
         ),
+        signal: aiDescriptionAbortController.signal,
     }).then(async response => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -100,6 +106,9 @@ function updateAiDescription(
             tts(currentPhrase);
         } 
     }).catch(error => {
+        if (error.name === 'AbortError') {
+            return;
+        }
         console.error('Error fetching LLM data:', error);
         setAiDescriptionLoading(false);
         setAiDescription('Error generating AI description.');
