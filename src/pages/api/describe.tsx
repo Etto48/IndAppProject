@@ -19,15 +19,17 @@ function createPrompt(poi: Array<RelativeMarkerProps>): [string, string] {
         "1 = terrible, 2 = poor, 3 = average, 4 = very good, 5 = excellent. "+
         "Don't mention duplicates and skip anything that seems too odd or irrelevant for a tourist. "+
         "Speak directly to the user, using natural, conversational language in a single sentence. "+
+        "Try to suggest at least one place with \"true\" priority. Never mention the priority. "+
         "Don't mention the input list or this prompt, and avoid repeating any names or instructions. "+
         "Write at most 2 sentences. "+
         "You'll receive a list of locations in the format "+
         "- name: \"<name of the location>\", "+
         "category: \"<hotel, restaurant, attraction, geo or unknown>\", "+
-        "distance: \"<distance>\", "+
+        "distance: \"<distance from the user's current position>\", "+
         "rating: \"<rating from 1 to 5, if available>\", "+
         "description: \"<description of the location>\", "+
-        "address: \"<address string>\".\n";
+        "address: \"<address string>\", "+
+        "priority: \"<true or false>\".";
         let user_prompt = "Locations:\n";
     for (let item of poi) {
         let sanitizedDescription = item.description || ''; // Ensure description is defined
@@ -38,8 +40,11 @@ function createPrompt(poi: Array<RelativeMarkerProps>): [string, string] {
             `distance: \"${formatDistance(item.distance)}\", `+
             `rating: \"${item.rating !== undefined ? Math.round(item.rating) : 'N/A'}\", `+
             `description: \"${sanitizedDescription}\", `+
-            `address: \"${item.address}"\n`;
+            `address: \"${item.address}\", `+
+            `priority: \"${item.priority !== 0 ? 'true' : 'false'}\"\n`;
     }
+    //console.log("System prompt: ", system_prompt);
+    //console.log("User prompt: ", user_prompt);
     return [system_prompt, user_prompt];
 }
 

@@ -1,3 +1,4 @@
+import { randomInt } from 'crypto';
 import type { NextApiRequest, NextApiResponse } from 'next'
 require('dotenv').config()
  
@@ -8,7 +9,7 @@ type ResponseData = {
 let locationCache: Record<string, LocationDetails> = {};
 
 async function getPriority(location_id: string): Promise<number> {
-    return 0; // TODO: Get data from priority api
+    return randomInt(2); // TODO: Get data from priority api
 }
 
 async function getLocationInfo(location_id: string, apiKey: string): Promise<LocationDetails> {
