@@ -2,7 +2,7 @@ services:
   ollama_prod:
     build:
       context: ollama
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     container_name: ollama
     environment:
       - OLLAMA_KEEP_ALIVE=-1
@@ -10,10 +10,13 @@ services:
       - "11434:11434"
     profiles:
       - prod
+    devices:
+      - /dev/kfd
+      - /dev/dri
   ollama_dev:
     build:
       context: ollama
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: ollama
     environment:
       - OLLAMA_KEEP_ALIVE=-1
