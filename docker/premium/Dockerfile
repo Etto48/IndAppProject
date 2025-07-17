@@ -1,7 +1,13 @@
-FROM postgres:latest
+FROM python:3.12
 
-ENV POSTGRES_USER=postgres
-ENV POSTGRES_PASSWORD=postgres
-ENV PGDATA=/var/lib/postgresql/data/pgdata
+WORKDIR /app/
 
-COPY init-db.sh /docker-entrypoint-initdb.d/
+COPY server.py /app/server.py
+COPY requirements.txt /app/requirements.txt
+COPY setup.sh /app/setup.sh
+RUN chmod +x /app/setup.sh && \
+    /app/setup.sh
+
+EXPOSE 5432
+
+CMD ["python", "server.py"]

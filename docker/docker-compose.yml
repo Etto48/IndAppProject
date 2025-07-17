@@ -51,25 +51,25 @@ services:
     build:
       context: premium
       dockerfile: Dockerfile
+    environment:
+      - PORT=5432
     container_name: premium
     expose:
       - "5432:5432"
     profiles:
       - prod
-    volumes:
-      - ./premium/premium_data:/var/lib/postgresql/data
   premium_dev:
     build:
       context: premium
       dockerfile: Dockerfile
+    environment:
+      - PORT=5432
     container_name: premium
     ports:
       - "5432:5432"
     profiles:
       - dev
       - backend
-    volumes:
-      - ./premium/premium_data:/var/lib/postgresql/data
   travelmate_prod:
     build:
       context: ../

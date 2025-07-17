@@ -9,7 +9,9 @@ type ResponseData = {
 let locationCache: Record<string, LocationDetails> = {};
 
 async function getPriority(location_id: string): Promise<number> {
-    return randomInt(2); // TODO: Get data from priority api
+    const res = await fetch(`https://127.0.0.1:3000/api/premium?id=${location_id}`);
+    const { id, tier } = await res.json();
+    return tier;
 }
 
 async function getLocationInfo(location_id: string, apiKey: string): Promise<LocationDetails> {
