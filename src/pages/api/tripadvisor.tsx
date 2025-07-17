@@ -9,9 +9,17 @@ type ResponseData = {
 let locationCache: Record<string, LocationDetails> = {};
 
 async function getPriority(location_id: string): Promise<number> {
-    const res = await fetch(`https://127.0.0.1:3000/api/premium?id=${location_id}`);
-    const { id, tier } = await res.json();
-    return tier;
+    return await fetch(`https://localhost:3000/api/premium?id=${location_id}`).then(response => {
+        if (!response.ok) {
+            throw new Error(`Failed to fetch premium data for location ${location_id}`);
+        }
+        return response.json();
+    }).then(data => {
+        return data.tier;
+    }).catch(error => {
+        console.error(`Error fetching premium data for location ${location_id}:`, error);
+        return 0;
+    });
 }
 
 async function getLocationInfo(location_id: string, apiKey: string): Promise<LocationDetails> {
