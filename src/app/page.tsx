@@ -6,7 +6,6 @@ import LocationButton from "./location_button";
 import { locationDistance } from "./utils";
 import { disableAudio, enableAudio, getMutedState } from "./audio";
 import { AiOverview, updateMarkers } from "./ai_overview";
-import { replayTTS } from "./tts";
 import { getIPLocation } from "./geolocation";
 const Map = dynamic(() => import("./map"), {
     ssr: false,
@@ -42,7 +41,7 @@ export default function Home() {
                 watchPosition: true,
                 userDecisionTimeout: 5000,
                 onError: (error) => {
-                    console.error("Geolocation error: ", error ? error.message : "Timeout");
+                    console.warn("Geolocation error: ", error ? error.message : "Timeout");
                     if (!requestedIpLocation) {
                         setRequestedIpLocation(true);
                         getIPLocation().then((info) => {

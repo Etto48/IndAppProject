@@ -8,18 +8,21 @@ type ResponseData = {
 
 let locationCache: Record<string, LocationDetails> = {};
 
+const premiumApiUrl = process.env.PREMIUM_URL || "http://localhost:5432";
+
 async function getPriority(location_id: string): Promise<number> {
-    return await fetch(`https://localhost:3000/api/premium?id=${location_id}`).then(response => {
-        if (!response.ok) {
-            throw new Error(`Failed to fetch premium data for location ${location_id}`);
+    try {
+        const res = await fetch(`${premiumApiUrl}/premium?id=${location_id}`);
+        if (!res.ok) {
+            throw new Error("Error contacting premium API");
         }
-        return response.json();
-    }).then(data => {
+
+        const data = await res.json(); // es: { id: "...", tier: 0 }
         return data.tier;
-    }).catch(error => {
-        console.error(`Error fetching premium data for location ${location_id}:`, error);
-        return 0;
-    });
+    } catch (err) {
+        console.error("Error calling premium API:", err);
+        throw new Error("Internal Server Error");
+    }
 }
 
 async function getLocationInfo(location_id: string, apiKey: string): Promise<LocationDetails> {

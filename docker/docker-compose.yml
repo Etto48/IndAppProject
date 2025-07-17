@@ -80,7 +80,8 @@ services:
       - LLM_URL=http://ollama:11434
       - PIPER_URL=http://piper:5000
       - PREMIUM_URL=http://premium:5432
-    ports:
+      - PORT=3000
+    expose:
       - "3000:3000"
     depends_on:
       - ollama_prod
@@ -95,9 +96,11 @@ services:
     container_name: travelmate
     environment:
       - APP_MODE=dev
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
       - LLM_URL=http://ollama:11434
       - PIPER_URL=http://piper:5000
       - PREMIUM_URL=http://premium:5432
+      - PORT=3000
     ports:
       - "3000:3000"
     depends_on:
@@ -108,4 +111,15 @@ services:
       - ../:/app
     profiles:
       - dev
-    
+  nginx_prod:
+    build: 
+      context: nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - travelmate_prod
+    profiles:
+      - prod
