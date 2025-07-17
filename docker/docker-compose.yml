@@ -80,9 +80,9 @@ services:
       - LLM_URL=http://ollama:11434
       - PIPER_URL=http://piper:5000
       - PREMIUM_URL=http://premium:5432
-      - PORT=3000
+      - PORT=4848
     ports:
-      - "4000:3000"
+      - "4848:4848"
     depends_on:
       - ollama_prod
       - piper_prod
@@ -99,9 +99,9 @@ services:
       - LLM_URL=http://ollama:11434
       - PIPER_URL=http://piper:5000
       - PREMIUM_URL=http://premium:5432
-      - PORT=3000
+      - PORT=4848
     ports:
-      - "4000:3000"
+      - "4848:4848"
     depends_on:
       - ollama_dev
       - piper_dev

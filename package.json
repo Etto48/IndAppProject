@@ -5,9 +5,9 @@
   "main": "src/app/electron.js",
   "scripts": {
     "electron": "electron .",
-    "dev": "next dev --turbopack --experimental-https",
+    "dev": "next dev --turbopack --experimental-https -p $PORT",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p $PORT",
     "lint": "next lint"
   },
   "dependencies": {
