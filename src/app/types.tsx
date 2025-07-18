@@ -4,7 +4,7 @@ type LocationDetails = {
     position: [number, number],
     address: string,
     category: string,
-    description: string,
+    types?: string[],
     rating?: number,
 }
 

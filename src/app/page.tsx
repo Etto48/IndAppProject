@@ -55,7 +55,7 @@ export default function Home() {
     const [oldLocation, setOldLocation] = useState<[number, number] | null>(null);
     let currentLocation: [number, number] | null = coords ? [coords.latitude, coords.longitude] as [number, number] : ipLocation;
     let accuracy = coords ? coords.accuracy : 0;
-    const locationThreshold = 500; // metres
+    const locationThreshold = 250; // metres
     useEffect(() => {
         if (currentLocation !== null && (oldLocation === null || locationDistance(oldLocation, currentLocation) > locationThreshold)) {
             updateMarkers(setMarkers, setAiDescription, setAiDescriptionLoading, currentLocation);

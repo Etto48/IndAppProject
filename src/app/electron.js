@@ -24,7 +24,7 @@ function createWindow() {
         callback(true); // Automatically grant permission
     });
 
-    mainWindow.loadURL('https://127.0.0.1:3000');
+    mainWindow.loadURL('https://127.0.0.1:4848');
 
     mainWindow.on('closed', () => {
         mainWindow = null;

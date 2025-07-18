@@ -8,6 +8,7 @@ function LocationIcon({ category, active }: { category: string, active?: boolean
         attraction: './attraction.svg',
         hotel: './hotel.svg',
         geo: './geo.svg',
+        utility: './utility.svg',
         unknown: './unknown.svg'
     }[category] || './unknown.svg';
     if (active) {
@@ -33,7 +34,7 @@ export default function LocationButton({currentLocation, marker, focusOn, setFoc
                 <strong className="location-button-name">{marker.name}</strong>
                 {currentLocation && <small className="location-button-distance">{formatDistance(locationDistance(currentLocation, marker.position))} away</small>}
                 {marker.rating && StarsBar({ stars: marker.rating })}
-                <span className="location-button-description">{marker.description == ""? "No description available." : marker.description}</span>
+                {/*<span className="location-button-description">{marker.description == ""? "No description available." : marker.description}</span>*/}
             </div>
             <a className="location-button-open-maps" href={`https://www.google.com/maps?q=${marker.position[0]},${marker.position[1]}`} target="_blank" rel="noopener noreferrer">
                 <img src="./open_in_maps.svg" alt="Open in Maps" />

@@ -10,6 +10,7 @@ const apiKey = process.env.LLM_API_KEY || 'ollama';
 const llm = new OpenAI({
     apiKey: apiKey,
     baseURL: `${targetUrl}/v1`,
+    timeout: 2147483647,
 })
 
 
@@ -24,27 +25,22 @@ function createPrompt(poi: Array<RelativeMarkerProps>): [string, string] {
         "Write at most 2 sentences. "+
         "You'll receive a list of locations in the format "+
         "- name: \"<name of the location>\", "+
-        "category: \"<hotel, restaurant, attraction, geo or unknown>\", "+
+        "types: \"<a list of location types like restaurant, lodging or bar>\", "+
         "distance: \"<distance from the user's current position>\", "+
         "rating: \"<rating from 1 to 5, if available>\", "+
-        "description: \"<description of the location>\", "+
         "address: \"<address string>\", "+
         "priority: \"<true or false>\".";
         let user_prompt = "Locations:\n";
     for (let item of poi) {
-        let sanitizedDescription = item.description || ''; // Ensure description is defined
-        sanitizedDescription = sanitizedDescription.replace(/"/g, '\\"'); // Escape quotes in description
-        sanitizedDescription = sanitizedDescription.replace(/\n/g, ' '); // Replace newlines with spaces
         user_prompt += `- name: \"${item.name}\", `+
-            `category: \"${item.category}\", `+
+            `types: \"${item.types?.join(", ") ?? "unknown"}\", `+
             `distance: \"${formatDistance(item.distance)}\", `+
             `rating: \"${item.rating !== undefined ? Math.round(item.rating) : 'N/A'}\", `+
-            `description: \"${sanitizedDescription}\", `+
             `address: \"${item.address}\", `+
             `priority: \"${item.priority !== 0 ? 'true' : 'false'}\"\n`;
     }
-    //console.log("System prompt: ", system_prompt);
-    //console.log("User prompt: ", user_prompt);
+    console.log("System prompt: ", system_prompt);
+    console.log("User prompt: ", user_prompt);
     return [system_prompt, user_prompt];
 }
 

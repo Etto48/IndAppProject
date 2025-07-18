@@ -7,13 +7,14 @@ export function updateMarkers(
     setAiDescriptionLoading: (loading: boolean) => void,
     currentLocation: [number, number],
 ) {
-    fetch(`/api/tripadvisor?lat=${currentLocation[0]}&long=${currentLocation[1]}`)
+    fetch(`/api/google?lat=${currentLocation[0]}&long=${currentLocation[1]}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             return response.json();
         }).then(data => {
+            console.log('Fetched markers:', data);
             const validMarkers = data.data
                 .filter((item: MaybeLocationMarkerProps) => "error" in item === false )
                 .sort((a: LocationMarkerProps, b: LocationMarkerProps) => {

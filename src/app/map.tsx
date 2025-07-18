@@ -100,6 +100,20 @@ const geoActiveIcon = new Icon({
     popupAnchor: [0, -iconSize],
 });
 
+const utilityIcon = new Icon({
+    iconUrl: './utility.svg',
+    iconSize: [iconSize, iconSize],
+    iconAnchor: [iconSize/2, iconSize],
+    popupAnchor: [0, -iconSize],
+});
+
+const utilityActiveIcon = new Icon({
+    iconUrl: './utility_active.svg',
+    iconSize: [iconSize, iconSize],
+    iconAnchor: [iconSize/2, iconSize],
+    popupAnchor: [0, -iconSize],
+});
+
 const unknownActiveIcon = new Icon({
     iconUrl: './unknown_active.svg',
     iconSize: [iconSize, iconSize],
@@ -163,6 +177,12 @@ function selectIcon(category: string, active: boolean): Icon {
                 return geoActiveIcon;
             } else {
                 return geoIcon;
+            }
+        case 'utility':
+            if (active) {
+                return utilityActiveIcon;
+            } else {
+                return utilityIcon;
             }
         default:
             if (active) {
