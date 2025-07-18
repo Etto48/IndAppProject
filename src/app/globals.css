@@ -284,6 +284,34 @@ button:active {
   background-repeat: repeat-x;
 }
 
+.location-button .location-button-open-maps {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.location-button .location-button-open-maps img {
+  width: 30px;
+  height: 30px;
+  margin: 0;
+}
+
+@media (hover: hover) {
+  .location-button .location-button-open-maps:hover {
+    background-color: var(--component-background-hover);
+  }
+  .location-button:hover:has(.location-button-open-maps:hover) {
+    background-color: var(--component-background);
+  } 
+}
+
+.location-button .location-button-open-maps:active {
+  background-color: var(--component-background-active);
+}
+
 .unmute-button {
   position: fixed;
   z-index: 1000;
