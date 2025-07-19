@@ -24,40 +24,6 @@ async function getPriority(location_id: string): Promise<number> {
         throw new Error("Internal Server Error");
     }
 }
-
-async function getLocationInfo(location_id: string, apiKey: string): Promise<LocationDetails> {
-    if (locationCache[location_id]) {
-        return locationCache[location_id];
-    }
-
-    const detailsUrl = `https://api.content.tripadvisor.com/api/v1/location/${location_id}/details?key=${apiKey}&language=en`;
-    try {
-        const detailsResponse = await fetch(detailsUrl, {
-            method: 'GET',
-            headers: {
-                'accept': 'application/json'
-            }
-        });
-
-        if (!detailsResponse.ok) {
-            throw new Error(`Error fetching details for location ${location_id}: ${detailsResponse.statusText}`);
-        }
-
-        const detailsData = await detailsResponse.json();
-        let details = {
-            location_id: detailsData.location_id,
-            position: [detailsData.latitude, detailsData.longitude] as [number, number],
-            address: detailsData.address_obj.address_string,
-            category: detailsData.category.name || 'unknown',
-            description: detailsData.description || '',
-            rating: (detailsData.rating && +detailsData.rating) || undefined,
-        };
-        locationCache[location_id] = details;
-        return details;
-    } catch {
-        throw new Error(`Failed to fetch details for location ${location_id}`);
-    }
-}
     
 function typesToCategory(types: string[]): string {
     if (!types || types.length === 0) return 'unknown';
