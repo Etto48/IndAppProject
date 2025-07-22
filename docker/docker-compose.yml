@@ -3,7 +3,7 @@ services:
     build:
       context: ollama
       dockerfile: Dockerfile.prod
-    container_name: ollama
+    container_name: ollama_prod
     environment:
       - OLLAMA_KEEP_ALIVE=-1
     expose:
@@ -17,7 +17,7 @@ services:
     build:
       context: ollama
       dockerfile: Dockerfile.dev
-    container_name: ollama
+    container_name: ollama_dev
     environment:
       - OLLAMA_KEEP_ALIVE=-1
     ports:
@@ -32,7 +32,7 @@ services:
     environment:
       - PIPER_VOICE=en_US-hfc_female-medium
       - PORT=5000
-    container_name: piper
+    container_name: piper_prod
     expose:
       - "5000:5000"
     profiles:
@@ -44,7 +44,7 @@ services:
     environment:
       - PIPER_VOICE=en_US-hfc_female-medium
       - PORT=5000
-    container_name: piper
+    container_name: piper_dev
     ports:
       - "5000:5000"
     profiles:
@@ -56,7 +56,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - PORT=5432
-    container_name: premium
+    container_name: premium_prod
     expose:
       - "5432:5432"
     profiles:
@@ -67,7 +67,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - PORT=5432
-    container_name: premium
+    container_name: premium_dev
     ports:
       - "5432:5432"
     profiles:
@@ -77,7 +77,7 @@ services:
     build:
       context: ../
       dockerfile: docker/travelmate/Dockerfile.prod
-    container_name: travelmate
+    container_name: travelmate_prod
     environment:
       - APP_MODE=prod
       - LLM_URL=http://ollama:11434
@@ -96,7 +96,7 @@ services:
     build:
       context: ../
       dockerfile: docker/travelmate/Dockerfile.dev
-    container_name: travelmate
+    container_name: travelmate_dev
     environment:
       - APP_MODE=dev
       - LLM_URL=http://ollama:11434

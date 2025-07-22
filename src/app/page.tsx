@@ -7,6 +7,7 @@ import { locationDistance } from "./utils";
 import { disableAudio, enableAudio, getMutedState } from "./audio";
 import { AiOverview, updateMarkers } from "./ai_overview";
 import { getIPLocation } from "./geolocation";
+import FilterButtons from "./filter_buttons";
 const Map = dynamic(() => import("./map"), {
     ssr: false,
 });
@@ -16,6 +17,7 @@ export default function Home() {
         
     ]);
     const [muted, setMuted] = useState<boolean>(true);
+    const [filter, setFilter] = useState<string>('all');
     useEffect(() => {
         const initialMuted = getMutedState();
         setMuted(initialMuted);
@@ -65,15 +67,16 @@ export default function Home() {
     return (
         <div className="container">
             <div className="map-container">
-                <Map 
-                    currentLocation={currentLocation} 
-                    focusOn={focusOn} 
-                    setFocusOn={setFocusOn} 
+                <Map
+                    currentLocation={currentLocation}
+                    focusOn={focusOn}
+                    setFocusOn={setFocusOn}
                     markers={markers}
                     accuracy={accuracy}
                 />
             </div>
             <div className="marker-list-container">
+                <FilterButtons filter={filter} setFilter={setFilter} />
                 <button className="unmute-button"  onClick={() => setMuted(!muted)}>
                     <div className="unmute-button-wrapper">
                         <img src={muted ? "muted.svg" : "unmuted.svg"}
@@ -84,12 +87,12 @@ export default function Home() {
                 <div className="marker-list">
                     <AiOverview aiDescription={aiDescription} aiDescriptionLoading={aiDescriptionLoading} />
                     <h2 className="poi-title">Points of interest</h2>
-                    {markers.map((marker, index) => (
-                        <LocationButton 
-                            currentLocation={currentLocation} 
-                            marker={marker} 
-                            focusOn={focusOn} 
-                            setFocusOn={setFocusOn} 
+                    {markers.filter(marker => filter === 'all' || marker.category === filter).map((marker, index) => (
+                        <LocationButton
+                            currentLocation={currentLocation}
+                            marker={marker}
+                            focusOn={focusOn}
+                            setFocusOn={setFocusOn}
                             key={index}
                         />
                     ))}
