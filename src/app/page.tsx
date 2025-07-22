@@ -64,6 +64,9 @@ export default function Home() {
             setOldLocation(currentLocation);
         }
     }, [currentLocation]);
+
+    const filteredMarkers = markers.filter(marker => filter === 'all' || marker.category === filter);
+
     return (
         <div className="container">
             <div className="map-container">
@@ -71,7 +74,7 @@ export default function Home() {
                     currentLocation={currentLocation}
                     focusOn={focusOn}
                     setFocusOn={setFocusOn}
-                    markers={markers}
+                    markers={filteredMarkers}
                     accuracy={accuracy}
                 />
             </div>
@@ -87,7 +90,7 @@ export default function Home() {
                 <div className="marker-list">
                     <AiOverview aiDescription={aiDescription} aiDescriptionLoading={aiDescriptionLoading} />
                     <h2 className="poi-title">Points of interest</h2>
-                    {markers.filter(marker => filter === 'all' || marker.category === filter).map((marker, index) => (
+                    {filteredMarkers.map((marker, index) => (
                         <LocationButton
                             currentLocation={currentLocation}
                             marker={marker}
