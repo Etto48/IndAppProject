@@ -80,9 +80,9 @@ services:
     container_name: travelmate_prod
     environment:
       - APP_MODE=prod
-      - LLM_URL=http://ollama:11434
-      - PIPER_URL=http://piper:5000
-      - PREMIUM_URL=http://premium:5432
+      - LLM_URL=http://ollama_prod:11434
+      - PIPER_URL=http://piper_prod:5000
+      - PREMIUM_URL=http://premium_prod:5432
       - PORT=4848
     ports:
       - "4848:4848"
@@ -99,9 +99,9 @@ services:
     container_name: travelmate_dev
     environment:
       - APP_MODE=dev
-      - LLM_URL=http://ollama:11434
-      - PIPER_URL=http://piper:5000
-      - PREMIUM_URL=http://premium:5432
+      - LLM_URL=http://ollama_dev:11434
+      - PIPER_URL=http://piper_dev:5000
+      - PREMIUM_URL=http://premium_dev:5432
       - PORT=4848
     ports:
       - "4848:4848"
