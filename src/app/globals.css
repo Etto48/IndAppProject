@@ -503,3 +503,12 @@ button:active {
 .ai-description-container:active .ai-description-container-wrapper {
   background-color: var(--component-background-active);
 }
+
+.popup-content {
+  text-align: center;
+}
+
+.popup-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+}

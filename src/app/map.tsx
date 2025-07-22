@@ -223,7 +223,10 @@ function MapContents({ currentLocation, markers, focusOn, setFocusOn, accuracy, 
                     zIndexOffset={marker === focusOn ? 1000 : 0}
                     >
                     <Popup>
-                        {marker.name}
+                        <div className="popup-content">
+                            <div className="popup-name">{marker.name}</div>
+                            {marker.comparison_text && <div className="popup-comparison">{marker.comparison_text}</div>}
+                        </div>
                     </Popup>
                 </Marker>
             ))}
