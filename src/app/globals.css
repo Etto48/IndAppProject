@@ -353,10 +353,82 @@ button:active {
   background-color: var(--component-background-active);
 }
 
+.filter-buttons-container {
+  position: fixed;
+  z-index: 1000;
+  bottom: 90px;
+  right: calc(100% / 3 + 50px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--contrast-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid transparent;
+  padding: 0;
+}
+
+.filter-button.active {
+  border-color: var(--foreground-important);
+}
+
+.filter-button.active .filter-button-wrapper {
+  background-color: var(--component-background-active);
+}
+
+.filter-button:hover,
+.filter-button:active {
+  background-color: var(--contrast-border);
+}
+
+.filter-button-wrapper {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--background);
+  transition: background-color 0.1s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (hover: hover) {
+  .filter-button:hover .filter-button-wrapper {
+    background-color: var(--component-background-hover);
+  }
+}
+
+.filter-button:active .filter-button-wrapper {
+  background-color: var(--component-background-active);
+}
+
+.filter-button img {
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+}
+
+@media screen and (max-width: 576px) {
+  .filter-buttons-container {
+    flex-direction: row;
+    right: 90px;
+    bottom: 20px;
+    top: unset;
+  }
+}
+
 @media screen and (max-width: 576px) {
   .unmute-button {
     right: 20px;
-    top: calc(100%/3*2 - 110px);
+    bottom: 20px;
+    top: unset;
   }
 }
 
@@ -430,4 +502,13 @@ button:active {
 
 .ai-description-container:active .ai-description-container-wrapper {
   background-color: var(--component-background-active);
+}
+
+.popup-content {
+  text-align: center;
+}
+
+.popup-name {
+  font-weight: bold;
+  margin-bottom: 5px;
 }

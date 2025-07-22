@@ -184,6 +184,54 @@ function typesToCategory(types: string[]): string {
     return 'unknown';
 }
 
+function generateComparisonText(item: any, avgPrice: number, avgRating: number): string {
+    if (item.category !== 'restaurant' && item.category !== 'hotel') {
+        return '';
+    }
+
+    const itemPrice = item.price_level;
+    const itemRating = item.rating;
+
+    const hasPrice = itemPrice !== undefined;
+    const hasRating = itemRating !== undefined;
+
+    if (!hasPrice && !hasRating) {
+        return "This place is a bit of an enigma! There's not enough data on pricing or reviews, so it's a true adventure waiting to happen.";
+    }
+
+    let priceComp = '';
+    if (hasPrice) {
+        if (itemPrice > avgPrice + 0.5) {
+            priceComp = `This spot is a bit of a splurge compared to its neighbors!`;
+        } else if (itemPrice < avgPrice - 0.5) {
+            priceComp = `You've found a bargain! This place is easier on the wallet than others nearby.`;
+        } else {
+            priceComp = `This place has a pretty standard price for the area.`;
+        }
+    } else {
+        priceComp = "It's a bit of a mystery on price, as there isn't enough data yet.";
+    }
+
+    let ratingComp = '';
+    if (hasRating) {
+        if (itemRating > avgRating + 0.5) {
+            ratingComp = `People absolutely love it! The reviews are glowing compared to other spots.`;
+        } else if (itemRating < avgRating - 0.5) {
+            ratingComp = `Heads up, the reviews are a bit more mixed here compared to other local favorites.`;
+        } else {
+            ratingComp = `It's a solid choice, with reviews that are right in line with other places around.`;
+        }
+    } else {
+        ratingComp = "There aren't enough reviews to get a sense of the vibe yet, so you could be a trendsetter!";
+    }
+
+    if (hasPrice && hasRating) {
+        return `Check this out! ${priceComp} Plus, ${ratingComp.toLowerCase()}`;
+    } else {
+        return `${priceComp} ${ratingComp}`;
+    }
+}
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<ResponseData>
@@ -197,8 +245,11 @@ export default async function handler(
     const url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"+
                 `?location=${lat},${long}`+
                 "&opennow"+
-                "&rankby=prominence"+
-                "&radius=500"+
+                //"&rankby=prominence"+
+                "&rankby=distance"+
+                //"&radius=500"+
+                //"&keyword=hotel,restaurant,point_of_interest"+
+                "&keyword="+
                 `&key=${process.env.GOOGLE_API_KEY}`;
     try {
         const apiResponse = await fetch(url, {
@@ -215,16 +266,36 @@ export default async function handler(
 
         const data = await apiResponse.json();
         if (data && data.results) {
+            const restaurants = data.results.filter((loc: any) => typesToCategory(loc.types) === 'restaurant' && loc.price_level !== undefined);
+            const hotels = data.results.filter((loc: any) => typesToCategory(loc.types) === 'hotel' && loc.price_level !== undefined);
+            const ratedRestaurants = restaurants.filter((loc: any) => loc.rating !== undefined);
+            const ratedHotels = hotels.filter((loc: any) => loc.rating !== undefined);
+
+            const avgRestaurantPrice = restaurants.reduce((acc: number, loc: any) => acc + loc.price_level, 0) / (restaurants.length || 1);
+            const avgRestaurantRating = ratedRestaurants.reduce((acc: number, loc: any) => acc + loc.rating, 0) / (ratedRestaurants.length || 1);
+            const avgHotelPrice = hotels.reduce((acc: number, loc: any) => acc + loc.price_level, 0) / (hotels.length || 1);
+            const avgHotelRating = ratedHotels.reduce((acc: number, loc: any) => acc + loc.rating, 0) / (ratedHotels.length || 1);
+
             data.data = await Promise.all(data.results.map(async (location: any, index: number): Promise<LocationMarkerProps> => {
+                const category = typesToCategory(location.types);
+                let comparisonText = '';
+                if (category === 'restaurant') {
+                    comparisonText = generateComparisonText({ ...location, category }, avgRestaurantPrice, avgRestaurantRating);
+                } else if (category === 'hotel') {
+                    comparisonText = generateComparisonText({ ...location, category }, avgHotelPrice, avgHotelRating);
+                }
+
                 return {
                     name: location.name,
-                    priority: await getPriority(location.location_id),
+                    priority: await getPriority(location.place_id),
                     location_id: location.place_id,
                     position: [location.geometry.location.lat, location.geometry.location.lng] as [number, number],
                     address: location.vicinity || '',
-                    category: typesToCategory(location.types),
+                    category: category,
                     types: location.types || [],
                     rating: location.rating || undefined,
+                    price_level: location.price_level || undefined,
+                    comparison_text: comparisonText,
                 };
             }));
             data.data = data.data.filter((item: LocationMarkerProps) => item.category !== 'unknown');
