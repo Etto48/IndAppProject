@@ -4,7 +4,7 @@
 
 Travel Mate is an innovative application designed to enhance the travel experience by providing users with a real-time, interactive map of their surroundings.
 This project serves as an initial implementation for an application intended to operate in both a standard mobile mode and a specialized automotive mode.
-The application automatically identifies and displays nearby points of interest (POIs), offering AI-generated descriptions and text-to-speech (TTS) functionality to act as a personal tour guide.
+The application automatically identifies and displays nearby points of interest (POIs), offering dynamic filtering, comparative analysis for hotels and restaurants, AI-generated descriptions, and text-to-speech (TTS) functionality to act as a personal tour guide.
 It is built with a modern microservices architecture, ensuring scalability and maintainability, with a clear path toward deployment on the container orchestration platform Kubernetes.
 
 ## Introduction
@@ -12,7 +12,7 @@ It is built with a modern microservices architecture, ensuring scalability and m
 In an age of information overload, travelers often struggle to find relevant and concise information about their immediate surroundings.
 Travel Mate aims to solve this problem by offering a streamlined and intuitive interface that delivers contextually relevant information on the go.
 This initial implementation focuses on the core functionalities for a web-based application, preparing for a future version designed for automotive environments.
-By using the user's geolocation, the application provides a dynamic map populated with curated POIs such as restaurants, hotels, and attractions. The core of the experience is the AI-powered overview, which gives users a unique, descriptive summary of the area, bringing the location to life. The system is designed to be dependent on a server hosted externally, which manages the backend logic and data processing.
+By using the user's geolocation, the application provides a dynamic map populated with curated POIs such as restaurants, hotels, and attractions. Users can filter these POIs to tailor the display to their interests. A key feature is the comparative analysis, which offers dynamically generated text comparing the price and rating of hotels and restaurants to others in the vicinity. The core of the experience is the AI-powered overview, which gives users a unique, descriptive summary of the area, bringing the location to life. The system is designed to be dependent on a server hosted externally, which manages the backend logic and data processing.
 
 ## Aims and Scope
 
@@ -24,6 +24,8 @@ The scope of the project includes:
 - **Real-time Geolocation**: Tracking the user's position accurately.
 - **Interactive Map**: Displaying the user's location and nearby POIs on a dynamic map.
 - **POI Integration**: Fetching and categorizing data from external services like Google and TripAdvisor.
+- **Dynamic Filtering**: Allowing users to filter POIs by category for a more focused view.
+- **Comparative Analysis**: Providing users with insightful, dynamically generated text that compares hotels and restaurants based on their price and rating relative to other nearby options.
 - **AI-Powered Descriptions**: Utilizing a Large Language Model (LLM) to generate descriptive summaries of the user's location.
 - **Text-to-Speech (TTS)**: Providing an audio option for the AI descriptions for a hands-free experience.
 - **Microservices Architecture**: Building the system with independent, containerized services for robustness and scalability.
