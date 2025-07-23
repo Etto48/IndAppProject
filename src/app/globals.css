@@ -194,6 +194,14 @@ button:active {
   margin-bottom: 10px;
 }
 
+
+@media screen and (max-width: 576px) {
+  .marker-list-container .location-button:last-child {
+    margin-bottom: 85px;
+  }
+}
+
+
 .poi-title {
   margin-left: 20px;
 }
