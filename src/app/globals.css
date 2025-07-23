@@ -417,18 +417,17 @@ button:active {
 
 @media screen and (max-width: 576px) {
   .filter-buttons-container {
-    flex-direction: column;
-    right: 20px;
+    flex-direction: row;
+    right: 90px;
+    bottom: 20px;
     top: unset;
-    bottom: calc(100% / 3 + 50px + 70px);
-    gap: 10px;
   }
 }
 
 @media screen and (max-width: 576px) {
   .unmute-button {
     right: 20px;
-    bottom: calc(100% / 3 + 50px);
+    bottom: 20px;
     top: unset;
   }
 }
