@@ -417,10 +417,11 @@ button:active {
 
 @media screen and (max-width: 576px) {
   .filter-buttons-container {
-    flex-direction: row;
-    right: 90px;
-    bottom: calc(100% / 3 + 50px);
+    flex-direction: column;
+    right: 20px;
     top: unset;
+    bottom: calc(100% / 3 + 50px + 70px);
+    gap: 10px;
   }
 }
 
