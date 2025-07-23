@@ -14,6 +14,8 @@ Travel Mate aims to solve this problem by offering a streamlined and intuitive i
 This initial implementation focuses on the core functionalities for a web-based application, preparing for a future version designed for automotive environments.
 By using the user's geolocation, the application provides a dynamic map populated with curated POIs such as restaurants, hotels, and attractions. Users can filter these POIs to tailor the display to their interests. A key feature is the comparative analysis, which offers dynamically generated text comparing the price and rating of hotels and restaurants to others in the vicinity. The core of the experience is the AI-powered overview, which gives users a unique, descriptive summary of the area, bringing the location to life. The system is designed to be dependent on a server hosted externally, which manages the backend logic and data processing.
 
+<div style="page-break-after: always;"></div>
+
 ## Aims and Scope
 
 The primary aim of the Travel Mate project is to develop a smart, interactive travel assistant that enriches the user's exploration of new places.
@@ -68,6 +70,8 @@ Travel Mate is architected as a multi-component system, with a clear separation 
   - `premium.tsx`: Interfaces with the Premium (PostgreSQL) service.
 - **`docker-compose.yml`**: The Docker Compose file that defines and configures the entire multi-container application, including development and production profiles.
 
+<div style="page-break-after: always;"></div>
+
 ## System Architecture
 
 The system is designed with a microservices architecture, containerized using Docker. This approach enhances modularity, scalability, and resilience, making it well-suited for a cloud-native deployment using an orchestrator like Kubernetes. The application is dependent on a server hosted outside of its immediate environment, which handles the core logic.
@@ -97,6 +101,8 @@ The architecture can be visualized as follows:
 ```
 
 Each service (`ollama`, `piper`, `premium`, `travelmate`) runs in its own Docker container, allowing them to be developed, deployed, and scaled independently. The entire stack is designed to be deployed and managed by Kubernetes for production environments.
+
+<div style="page-break-after: always;"></div>
 
 ## Performance Evaluation and Optimization
 
